@@ -1,0 +1,18 @@
+
+get_filename_component(MTG_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+if (NOT MTG_FOUND)
+    set(MTG_FOUND 1)
+
+	cmake_policy(PUSH)
+	cmake_policy(SET CMP0024 OLD)
+	include(${MTG_CMAKE_DIR}/MTGTargets.cmake)
+	cmake_policy(POP)
+
+    #include(${MTG_CMAKE_DIR}/MTGTargets.cmake)
+
+	set(MTG_INCLUDES ${MTG_CMAKE_DIR}/../include)
+	set(MTG_ENGINE_INCLUDES ${MTG_INCLUDES})
+	set(MTG_ENGINE_LIBRARIES MTG_Engine)
+
+endif()
