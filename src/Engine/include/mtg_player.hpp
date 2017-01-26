@@ -2,6 +2,7 @@
 #define MTG_PLAYER_HPP
 
 #include "mtg_types.hpp"
+#include <string>
 
 class MTG_Game;
 class MTG_Event;
@@ -13,21 +14,24 @@ public:
 	MTG_Player();
 	virtual ~MTG_Player();
 
-	enum State
+	enum State_t
 	{
 		E_NoneState = 0,
-		E_WaitWalk,
-		E_NoWalk,
 		E_PlayState,
-		E_AlredyWalk
+		E_PlayedState
 	};
 
-	MTG_Game *game() const;
-	State state() const;
-	Mana mana() const;
-	Health health() const;
-	bool attack() const;
-	MTG_CardSet cards(CardState aCardState) const;
+	const MTG_Game *game() const;
+	State_t state() const;
+	Role_t role() const;
+	Mana_t mana() const;
+	Health_t health() const;
+	MTG_Deck deck() const;
+	MTG_CardSet cards() const;
+	MTG_CardSet cards(MTG_Card::State_t aState) const;
+
+	void setName(const std::string &aName);
+	std::string name() const;
 	
 	bool play(const MTG_CardSet &aCards = MTG_CardSet());
 
@@ -38,19 +42,17 @@ protected:
 	virtual bool protection(const MTG_CardSet &aAttackCards) = 0;
 
 private:
-	bool select(IDCard aIDCard);
+	void reset(MTG_Game *aGame);
 
 private:
 	MTG_Game *mGame;
-	Mana mMana;
-	Health mHealth;
+	std::string mName;
+	Mana_t mMana;
+	Health_t mHealth;
 	MTG_Deck mDeck;
-	State mState;
-
-	MTG_CardSet mCardsOpen;
-	MTG_CardSet mCardsInvocation;
-	MTG_CardSet mCardsProtection;
-	MTG_CardSet mCardsAttack;
+	State_t mState;
+	Role_t mRole;
+	MTG_CardSet mCards;
 };
 
 #endif //MTG_PLAYER_HPP

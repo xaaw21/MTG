@@ -16,7 +16,7 @@ add_executable(${TEST_ENGINE_NAME} ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${
 target_link_libraries(${TEST_ENGINE_NAME} ${MTG_ENGINE_LIBRARIES})
 
 target_include_directories( "${TEST_ENGINE_NAME}"
-    PUBLIC
+    PRIVATE
        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
        $<BUILD_INTERFACE:${MTG_ENGINE_INCLUDES}>
 )

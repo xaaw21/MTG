@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(LIPKA_NAME Lipka)
+set(MTG_GAME_NAME MTG_Game)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON) 
 
 find_package(Qt5Widgets REQUIRED)
+find_package(MTG REQUIRED)
 
 file(GLOB_RECURSE SOURCES_CPP ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp")
 file(GLOB_RECURSE HEADERS_HPP ${CMAKE_CURRENT_SOURCE_DIR} "*.hpp")
@@ -16,30 +17,31 @@ QT5_WRAP_UI(UIS_HDRS ${UIS})
 QT5_ADD_RESOURCES(RES_RCC ${RES})
 
 if(DEFINED MSVC)
-  add_executable(${LIPKA_NAME} WIN32 ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
+  add_executable(${MTG_GAME_NAME} WIN32 ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set_target_properties(${LIPKA_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
+    set_target_properties(${MTG_GAME_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:CONSOLE")
   else() 
-    set_target_properties(${LIPKA_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
+    set_target_properties(${MTG_GAME_NAME} PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS")
   endif()
 else() 
   if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_executable(${LIPKA_NAME} ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
+    add_executable(${MTG_GAME_NAME} ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
   else()
-    add_executable(${LIPKA_NAME} WIN32 ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
+    add_executable(${MTG_GAME_NAME} WIN32 ${SOURCES_CPP} ${HEADERS_HPP} ${SOURCES_C} ${HEADERS_H} ${UIS_HDRS} ${RES_RCC})
   endif()
 endif(DEFINED MSVC)
 
-target_compile_definitions(${LIPKA_NAME} 
+target_compile_definitions(${MTG_GAME_NAME} 
 	PRIVATE
 		${Qt5Widgets_DEFINITIONS}
 )
-target_link_libraries(${LIPKA_NAME} ${Qt5Widgets_LIBRARIES})
-target_include_directories( "${LIPKA_NAME}"
-    PUBLIC
+target_link_libraries(${MTG_GAME_NAME} ${Qt5Widgets_LIBRARIES} ${MTG_ENGINE_LIBRARIES})
+target_include_directories( "${MTG_GAME_NAME}"
+    PRIVATE
        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-       $<BUILD_INTERFACE:${Qt5Widgets_INCLUDES}> 
+      # $<BUILD_INTERFACE:${Qt5Widgets_INCLUDES}>
+       $<BUILD_INTERFACE:${MTG_ENGINE_INCLUDES}> 
 )
 
-set_target_properties(${LIPKA_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-set_target_properties(${LIPKA_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})
+set_target_properties(${MTG_GAME_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+set_target_properties(${MTG_GAME_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})

@@ -6,28 +6,41 @@
 #include <array>
 #include <list>
 #include <vector>
+#include <map>
 
-#define INVALID_ID_CARD 0
+#define INVALID_ID_CARD -1
 #define COUNT_CARDS 20
 #define IS_VALID_ID_CARD(ID) (ID > 0 && ID <= COUNT_CARDS)
 
-typedef uint8_t IDCard;
-typedef int8_t Health;
-typedef uint8_t Mana;
-typedef uint16_t Runde;
+typedef int8_t IDCard_t;
+typedef int8_t Health_t;
+typedef uint16_t Mana_t;
+typedef uint16_t Round_t;
 
-struct MTG_Card
+enum Phase_t
 {
-	const uint8_t ID;
-	uint8_t Attack;
-	int8_t	Protection;
-	uint8_t Cost;
-
-	void restore() {}
-	bool valid() const { return true; }
+	E_NonePhase = 0,
+	E_StartPhase,
+	E_InvocationPhase,
+	E_AttackPhase,
+	E_FinishPhase
 };
 
-static const std::array<MTG_Card, COUNT_CARDS> TYPE_CARDS = { {
+enum Role_t
+{
+	E_NoneRole = 0,
+	E_AttackRole,
+	E_ProtectionRole
+};
+
+struct Card_t
+{
+	const uint8_t Attack;
+	const uint8_t Protection;
+	const uint8_t Cost;
+};
+
+static const std::array<Card_t, COUNT_CARDS> CARDS = { {
 	{ 1,1,1 },{ 1,1,1 },{ 1,1,1 },{ 1,1,1 },{ 1,1,1 },
 	{ 2,1,2 },{ 2,1,2 },{ 2,1,2 },
 	{ 1,3,2 },{ 1,3,2 },{ 1,3,2 },{ 1,3,2 },
@@ -37,69 +50,64 @@ static const std::array<MTG_Card, COUNT_CARDS> TYPE_CARDS = { {
 	{ 3,5,4 },{ 3,5,4 }
 } };
 
-MTG_ENGINE_EXPORT MTG_Card CardFromID(IDCard aIDCard);
+MTG_ENGINE_EXPORT Card_t CardFromID(IDCard_t aIDCard,bool *ok = 0);
+MTG_ENGINE_EXPORT Phase_t NextPhase(Phase_t aPhase);
 
-template<typename T>
-class MTG_CardSet : public std::list<T>
+
+class MTG_ENGINE_EXPORT MTG_Card
 {
 public:
-	MTG_CardSet() {}
-	~MTG_CardSet() {}
+	//Type_t
+	enum State_t
+	{
+		E_NoneState = 0,
+		E_OpenState,
+		E_InvocationState,
+		E_ProtectionState,
+		E_AttackState,
+		E_DeadState
+	};
 
-	bool push(const MTG_CardSet<T> &aCardSet) { return true; }
+	MTG_Card(State_t aState = E_OpenState);
+	MTG_Card(IDCard_t aIDCard, State_t aState = E_OpenState);
+	~MTG_Card();
+
+	uint8_t attack() const;
+	uint8_t protection() const;
+	uint8_t cost() const;
+
+	operator IDCard_t() const;
+	operator Card_t() const;
+
+	//Data
+	const IDCard_t ID;
+	State_t State;
+	Health_t Health;
 };
 
-template<>
-class MTG_ENGINE_EXPORT MTG_CardSet<IDCard> : public std::list<IDCard>
+class MTG_ENGINE_EXPORT MTG_CardSet : public std::list<MTG_Card>
 {
 public:
-	bool take(IDCard aIDCard) { return true; }
-	bool push(IDCard aIDCard) { return true; }
+	MTG_CardSet();
+	~MTG_CardSet();
+
+	MTG_CardSet cards(MTG_Card::State_t aState) const;
 };
 
-template<>
-class MTG_ENGINE_EXPORT MTG_CardSet<MTG_Card> : public std::list<MTG_Card>
+class MTG_ENGINE_EXPORT MTG_Deck : public std::vector<IDCard_t>
 {
 public:
-	bool take(IDCard aIDCard) { return true; }
-	bool push(IDCard aIDCard) { return true; }
+	MTG_Deck();
+	~MTG_Deck();
+
+	IDCard_t card();
+	MTG_CardSet cards(uint8_t aCount = 1);
+	void reset();
+	void disturb();
 };
 
+class MTG_Player;
 
-class MTG_ENGINE_EXPORT MTG_Deck
-{
-public:
-	MTG_Deck() {}
-	~MTG_Deck() {}
-
-	IDCard pop() { return 0; }
-	int count() const;
-	bool empty() const;
-	void reset() {}
-	void disturb() {}
-
-private:
-	MTG_CardSet<IDCard> mCards;
-};
-
-
-enum CardState
-{
-	E_OpenCard = 0,
-	E_CallCard,
-	E_ProtectionCard,
-	E_AttackCard,
-	E_OpenClose
-};
-
-enum Phase
-{
-	E_NonePhase = 0,
-	E_StartPhase,
-	E_InvocationPhase,
-	E_AttackPhase,
-	E_FinishPhase
-};
-
+typedef std::map<MTG_Player*, MTG_CardSet> MTG_CardMap;
 
 #endif //MTG_TYPES_HPP

@@ -2,34 +2,33 @@
 
 #include "mtg_player.hpp"
 #include "mtg_events.hpp"
+#include <algorithm>
 
-static IDObserver GLOBAL_ID_OBSERVER(1);
+static IDObserver_t GLOBAL_ID_OBSERVER(1);
 
 MTG_Game::MTG_Game()
 	:mState(E_StopState),
-	mFirstPlayer(0),
-	mSecondPlayer(0),
-	mAttackPlayer(0),
+	mPlayers(0,0),
 	mPhase(E_NonePhase),
-	mRunde(0),
+	mRound(0),
 	mLoopEvents(false)
 {
-
+	  
 }
 
 MTG_Game::~MTG_Game() {
-
+	clear();
 }
 
-MTG_Game::State MTG_Game::state() const {
+MTG_Game::State_t MTG_Game::state() const {
 	return mState;
 }
 
-Runde MTG_Game::runde() const {
-	return mRunde;
+Round_t MTG_Game::round() const {
+	return mRound;
 }
 
-Phase MTG_Game::phase() const {
+Phase_t MTG_Game::phase() const {
 	return mPhase;
 }
 
@@ -37,193 +36,222 @@ bool MTG_Game::setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer) {
 	if (mState != E_StopState) return false;
 	if (!aFirstPlayer || !aSecondPlayer) return false;
 	
-	mFirstPlayer = aFirstPlayer;
-	mSecondPlayer = aSecondPlayer;
-	mSecondPlayer->mGame = mFirstPlayer->mGame = this;
+	clear();
+	mPlayers = std::pair<MTG_Player*, MTG_Player*>(aFirstPlayer, aSecondPlayer);
+	mPlayers.first->reset(this);
+	mPlayers.second->reset(this);
 
 	return true;
 }
 
-MTG_Player* MTG_Game::playerFirst() const {
-	return mFirstPlayer;
+std::pair<MTG_Player*, MTG_Player*> MTG_Game::players() const {
+	return mPlayers;
 }
 
-MTG_Player* MTG_Game::playerSecond() const {
-	return mSecondPlayer;
-}
-
-MTG_Player* MTG_Game::playerAttack() const {
-	return mAttackPlayer;
-}
-
-MTG_Player* MTG_Game::playerNext(const MTG_Player *aPlayer) const {
-	if (aPlayer == mFirstPlayer) return mSecondPlayer;
-	else if(aPlayer == mSecondPlayer) return mFirstPlayer;
+MTG_Player* MTG_Game::player(Role_t aRole) const {
+	if (!mPlayers.first || !mPlayers.second) return 0;
+	if (mPlayers.first->role() == aRole) return mPlayers.first;
+	else if(mPlayers.second->role() == aRole) return mPlayers.second;
 	return 0;
 }
 
-IDObserver MTG_Game::addObserver(const MTG_Observer &aObserver) {
+MTG_Player* MTG_Game::playerNext(const MTG_Player *aPlayer) const {
+	if (aPlayer == mPlayers.first) return mPlayers.second;
+	else if(aPlayer == mPlayers.second) return mPlayers.first;
+	return 0;
+}
+
+IDObserver_t MTG_Game::addObserver(const Observer_t &aObserver) {
 	auto result = mObservers.insert(std::make_pair(GLOBAL_ID_OBSERVER, aObserver));
 	if (result.first == mObservers.end()) return INVALID_ID_OBSERVER;
 	GLOBAL_ID_OBSERVER++;
 	return result.first->first;
 }
 																
-bool MTG_Game::delObserver(IDObserver aIDObserver) {
+bool MTG_Game::delObserver(IDObserver_t aIDObserver) {
 	return mObservers.erase(aIDObserver);
 }
 
 void MTG_Game::clear() {
 	stop();
-	mFirstPlayer = mSecondPlayer = 0;
+	if (mPlayers.first) mPlayers.first->reset(0);
+	if (mPlayers.second) mPlayers.second->reset(0);
+	mPlayers = std::pair<MTG_Player*, MTG_Player*>(0, 0);
 }
 
 bool MTG_Game::start() {
-	if (!mFirstPlayer || !mSecondPlayer) return false;
+	if (!mPlayers.first || !mPlayers.second) return false;
+	stop();
 	mState = E_StartState;
 	mPhase = E_NonePhase;
-	mRunde = 0;
-	mAttackPlayer = 0;
+	mRound = 0;
 
-	//mFirstPlayer->reset();
-	//mSecondPlayer->reset();
-
-	MTG_GameEvent game_event(mState);
-	this->event(&game_event);
+	MTG_GameEvent *game_event = new MTG_GameEvent(mState);
+	game_event->mGame = this;
+	this->event(game_event);
 	return true;
 }
 									
 bool MTG_Game::stop() {
-	mState = E_StopState;
-	MTG_GameEvent game_event(mState);
-	this->event(&game_event);
+	std::for_each(mEvents.begin(), mEvents.end(), [](const MTG_Event* aEvent) { delete aEvent;});
+	mEvents.clear();
+	if (mState != E_StopState) {
+
+		mPlayers.first->reset(this);
+		mPlayers.second->reset(this);
+
+		mState = E_StopState;
+		MTG_GameEvent *game_event = new MTG_GameEvent(mState);
+		game_event->mGame = this;
+		this->event(game_event);
+	}
 	return true;
 }
 
-bool MTG_Game::next() {
-	if (mState != E_StartState) return;
+Phase_t MTG_Game::next() {
+	if (mState != E_StartState) return ::E_NonePhase;
 
-	if (mInfo.phase == E_FinishPhase) mInfo.phase = E_StartPhase;
-	else mInfo.phase = (Phase)(mInfo.phase + 1);
+	mPhase = NextPhase(mPhase);
 
-	switch (mInfo.phase)
+	MTG_Player *attack_player = player(E_AttackRole);
+	MTG_Player *protected_player = player(E_ProtectionRole);
+	MTG_CardMap cards_map;
+
+	switch (mPhase)
 	{
 	case E_StartPhase: {
 
-		static std::function<void(MTG_Player*)>	open_card = [this](MTG_Player *aPlayer) -> void {
-			aPlayer->mCardsOpen.push(aPlayer->mDeck.pop());
+		std::function<MTG_CardSet(MTG_Player*,int)> open_cards = [this](MTG_Player *aPlayer,int aCount) -> MTG_CardSet {
+			MTG_CardSet cards = aPlayer->mDeck.cards(aCount);
+			aPlayer->mCards.insert(aPlayer->mCards.end(),cards.begin(), cards.end());
+			return cards;
 		};
 
 		std::function<void(MTG_Player*)> init_palyer = [this](MTG_Player *aPlayer) -> void {
-			aPlayer->mCardsProtection.push(aPlayer->mCardsAttack);
-			aPlayer->mCardsProtection.push(aPlayer->mCardsInvocation);
-			aPlayer->mCardsAttack.clear();
-			aPlayer->mCardsInvocation.clear();
-			aPlayer->mMana = mInfo.runde;
-			aPlayer->mState = E_NoWalk;
+			//Существа в "Атаке" и "Призывается" переходят в боеготовность , а так же восстанавливаем здоровье всех существ
+			for (auto it = aPlayer->mCards.begin(), end = aPlayer->mCards.end(); it != end; it++) {
+				if(it->State == MTG_Card::E_AttackState || it->State == MTG_Card::E_InvocationState) it->State = MTG_Card::E_ProtectionState;
+				it->Health = it->protection();
+			}
+
+			//Даем маны
+			aPlayer->mMana = mRound;
+			aPlayer->mState = MTG_Player::E_NoneState;
 		};
 
-		std::function<MTG_Player*(MTG_Player*)> next_player = [this](MTG_Player *aPlayer) -> MTG_Player* {
-			if (aPlayer == mFirstPlayer) return mSecondPlayer;
-			return mFirstPlayer;
-		};
+		//Инициализация фазы начала боя
+		uint8_t open_attack = 1, open_protection = 1;
+		//Переходим на следующий раунд
+		mRound++;
 
-
-		if (0 == mInfo.runde) {
-			mAttackPlayer = (std::rand() % 2) ? mFirstPlayer : mSecondPlayer;
-			open_card(next_player(mAttackPlayer));
+		//Если это самый первый раунд, то выбираем атакующего игрока
+		if (1 == mRound) {
+			std::srand((int)this);
+			attack_player = (std::rand() % 2) ? mPlayers.first : mPlayers.second;
+			open_attack = 3;
+			open_protection = 4;
 		}
-		else {
-			mAttackPlayer = next_player(mAttackPlayer);
-			open_card(mFirstPlayer);
-			open_card(mSecondPlayer);
-		}
+		//Иначе атакующее право переходит другому игроку
+		else attack_player = playerNext(player(E_AttackRole));
 
-		mInfo.runde++;
+		//Определяем защитника
+		protected_player = playerNext(attack_player);
 
-		init_palyer(mFirstPlayer);
-		init_palyer(mSecondPlayer);
+		//Инициализируем игроков	
+		attack_player->mRole = E_AttackRole;
+		protected_player->mRole = E_ProtectionRole;	
+		init_palyer(attack_player);
+		init_palyer(protected_player);
 		
 
-		MTG_RundeEvent runde_event(mInfo.runde);
-		this->event(&runde_event);
+		cards_map[attack_player] = open_cards(attack_player, open_attack);
+		cards_map[protected_player] = open_cards(protected_player, open_protection);
 
 		break;
 	}
-	case E_CallPhase: {
-		mFirstPlayer->mState = E_Walk;
-		mSecondPlayer->mState = E_Walk;
+	case E_InvocationPhase: {
+		attack_player->mState = MTG_Player::E_PlayState;
+		protected_player->mState = MTG_Player::E_PlayState;
 		break;
 	}
 	case E_AttackPhase: {
-		mFirstPlayer->mState = E_WaitWalk;
-		mSecondPlayer->mState = E_WaitWalk;
-		mAttackPlayer->mState = E_Walk;
+		attack_player->mState = MTG_Player::E_PlayState;
+		protected_player->mState = MTG_Player::E_PlayState;
 		break;
 	}
 	case E_FinishPhase: {
-		mFirstPlayer->mState = E_NoWalk;
-		mSecondPlayer->mState = E_NoWalk;
+		attack_player->mState = MTG_Player::E_NoneState;
+		protected_player->mState = MTG_Player::E_NoneState;
 
-		
-		MTG_CardSet first_set, second_set;
-		while (true) {
-			MTG_Card first_card = CardFromID(mFirstPlayer->mCardsAttack.front());
-			MTG_Card second_card = CardFromID(mFirstPlayer->mCardsAttack.front());
+		MTG_CardSet attack_cards = attack_player->mCards.cards(MTG_Card::E_AttackState);
+		MTG_CardSet protection_cards = protected_player->mCards.cards(MTG_Card::E_AttackState);
 
-			if (!first_card.isValid() && !second_card.isValid()) break;
-			else if (!first_card.isValid()) {
-				mFirstPlayer->mHealth -= second_card.Attack;
-				second_set.push_back(second_card.ID);
+		auto it_protected = protection_cards.begin(), end_protected = protection_cards.end();
+		int g = 0;
+		for (auto it_attack = attack_cards.begin(), end_attack = attack_cards.end() , it_protected = protection_cards.begin(), end_protected = protection_cards.end(); it_attack != end_attack; it_attack++) {
+			if (it_protected != end_protected) {			
+				it_protected->Health -= it_attack->attack();
+				it_attack->Health -= it_protected->attack();
+				if (it_protected->Health <= 0) it_protected->State = MTG_Card::E_DeadState;
+				if (it_attack->Health <= 0) it_attack->State = MTG_Card::E_DeadState;
+				it_protected++;
 			}
-			else if (!second_card.isValid()) {
-				mSecondPlayer->mHealth -= first_card.Attack;
-				first_set.push_back(first_card.ID);
+			else protected_player->mHealth -= it_attack->attack();	
+		};
+
+		static std::function<void(MTG_Player*,const MTG_CardSet&)> cards_merge = [this](MTG_Player *aPlayer,const MTG_CardSet &aCardsMerge) -> void {
+			for (auto it_merge = aCardsMerge.begin(), end_merge = aCardsMerge.end(); it_merge != end_merge; it_merge++) {
+				for (auto it_cards = aPlayer->mCards.begin(), end_cards = aPlayer->mCards.end(); it_cards != end_cards; it_cards++) {
+					if (it_merge->ID == it_cards->ID) {
+
+						it_cards->Health = it_merge->Health;
+						it_cards->State = it_merge->State;
+
+						break;
+					}
+				}
 			}
-			else {
-				second_card.Protection -= first_card.Attack;
-				first_card.Protection -= second_card.Attack;
-				if (second_card.Protection <= 0) second_set.push_back(second_card.ID);
-				if (first_card.Protection <= 0) first_set.push_back(first_card.ID);
-			}
+		};
+
+		cards_merge(attack_player, attack_cards);
+		cards_merge(protected_player, protection_cards);
+
+		//attack_player->mCards.merge(attack_cards,merge);
+		//protected_player->mCards.merge(protection_cards, merge);
+
+		cards_map[attack_player] = attack_cards;
+		cards_map[protected_player] = protection_cards;
+
+		MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound, cards_map);
+		phase_event->mGame = this;
+		this->event(phase_event);
+
+		if (protected_player->mHealth <= 0) {
+			MTG_WinEvent *win_event = new MTG_WinEvent(attack_player);
+			win_event->mGame = this;
+			this->event(win_event);
+			stop();
 		}
 
-		mFirstPlayer->mCardsAttack = first_set;
-		mSecondPlayer->mCardsAttack = second_set;
-
-		if (mFirstPlayer->mHealth == mSecondPlayer->mHealth == 0) {}
-		else if(mFirstPlayer->mHealth == 0){}
-		else if (mSecondPlayer->mHealth == 0) {}
-
-		break;
+		return mPhase;
 	}
+	default: return E_NonePhase;
 	}
 
-	MTG_PhaseEvent phase_event(mInfo.phase);
-	this->event(&phase_event);
+	MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound, cards_map);
+	phase_event->mGame = this;
+	this->event(phase_event);
 
+	return mPhase;
 }
 
 bool MTG_Game::play(MTG_Player *aPlayer, const MTG_CardSet &aCards) {
-	if (aPlayer->mState != E_Walk) return false;
-	aPlayer->mState = E_AlredyWalk;
+	if (aPlayer->mState != MTG_Player::E_PlayState) return false;
+	aPlayer->mState = MTG_Player::E_PlayedState;
 
-	std::function<MTG_Player*(MTG_Player*)> next_player = [this](MTG_Player *aPlayer) -> MTG_Player* {
-		if (aPlayer == mFirstPlayer) return mSecondPlayer;
-		return mFirstPlayer;
-	};
-
-	switch (mInfo.phase)
-	{
-	case E_AttackPhase: {
-		next_player(mAttackPlayer)->mState = E_Walk;
-		break;
-	}
-	default: return false;
-	}
-
-	MTG_PlayerEvent player_event(mInfo.phase, aCards);
-	this->event(&player_event);
+	MTG_PlayerEvent *player_event = new MTG_PlayerEvent(mPhase, aPlayer, aCards);
+	player_event->mGame = this;
+	this->event(player_event);
 
 	return true;
 }
@@ -239,23 +267,12 @@ void MTG_Game::event(const MTG_Event *aEvent) {
 		const MTG_Event *event = mEvents.front();
 		mEvents.pop_front();
 
-		//work
-		switch (event->type())
-		{
-		case MTG_Event::E_PlayerEvent: {
-			const MTG_PlayerEvent *player_event = (const MTG_PlayerEvent*)event;
-			this->playerNext(player_event->player())->event(event);
-			break;
-		}
-		default: {
-			mFirstPlayer->event(aEvent);
-			mSecondPlayer->event(aEvent);
-		}
-		}
+		mPlayers.first->event(event);
+		mPlayers.second->event(event);
 
 		for (auto it = mObservers.begin(), end = mObservers.end(); it != end; it++) {
-			MTG_Observer observer = it->second;
-			observer(aEvent);
+			Observer_t observer = it->second;
+			observer(event);
 		}
 
 		delete event;

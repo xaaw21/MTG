@@ -5,6 +5,6 @@
 #include "../src/Engine/include/mtg_game.hpp"
 #include "../src/Engine/include/mtg_human.hpp"
 #include "../src/Engine/include/mtg_robot.hpp"
-#include "../src/Engine/include/mtg_view.hpp"
+#include "../src/Engine/include/mtg_observer.hpp"
 
 #endif //MTG_ENGINE_HPP
