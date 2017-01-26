@@ -80,7 +80,7 @@ public:
 	operator Card_t() const;
 
 	//Data
-	const IDCard_t ID;
+	IDCard_t ID;
 	State_t State;
 	Health_t Health;
 };

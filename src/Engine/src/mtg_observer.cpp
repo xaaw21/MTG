@@ -11,7 +11,7 @@ MTG_Observer::MTG_Observer()
 
 MTG_Observer::~MTG_Observer()
 {
-
+	clear();
 }
 
 void MTG_Observer::setGame(MTG_Game *aGame) {
