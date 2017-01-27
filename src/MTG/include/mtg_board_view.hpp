@@ -1,15 +1,15 @@
-#ifndef MTG_LOG_VIEW_HPP
-#define MTG_LOG_VIEW_HPP
+#ifndef MTG_BOARD_VIEW_HPP
+#define MTG_BOARD_VIEW_HPP
 
-#include <QWidget>
-#include "ui_log_view.h"
+#include "ui_board_view.h"
 #include "mtg_engine.hpp"
 
-class MTG_LogView : public QWidget, public MTG_Observer
+
+class MTG_BoardView : public QWidget, public MTG_Observer
 {
 public:
-	MTG_LogView(QWidget *aParent = 0);
-	~MTG_LogView();
+	MTG_BoardView(QWidget *aParent = 0);
+	~MTG_BoardView();
 
 protected:
 	void changeGame(MTG_Game *aGame);
@@ -19,12 +19,7 @@ protected:
 	void winEvent(MTG_Player *aPlayerWin);
 
 private:
-	void refresh();
-	void print(const QString &aMessage);
-
-private:
-	Ui::LogView ui;
+	Ui::BoardView ui;
 };
 
-
-#endif //MTG_LOG_VIEW_HPP
+#endif //MTG_BOARD_VIEW_HPP

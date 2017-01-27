@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>GameView</class>
+ <widget class="QWidget" name="GameView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>842</width>
+    <height>588</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MTG_Game</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#GameView{
+	background-color: rgb(22, 118, 51);
+
+}
+
+#Body{
+	background-color: rgb(41, 57, 85);
+
+}
+
+#frame {
+	border-color: rgb(255, 255, 255);
+	background-color: rgb(250, 250, 255);
+	background-color: qradialgradient(spread:pad, cx:0.5, cy:0.5, radius:0.5, fx:0.5, fy:0.5, stop:0 rgba(245, 245, 249, 255), stop:1 rgba(232, 232, 238, 255));
+	background-image: url(:/Resources/background3.png);
+/*border-radius: 5px;*/
+}
+
+QWidget#widget,#widget_2
+{
+border-image: url(:/Resources/top-menu.png);
+border-top: 9px transparent;
+border-bottom: 9px transparent;
+border-right: 9px transparent;
+border-left: 9px transparent;
+}
+
+#Logotype{
+border-image: url(:/SolutionGTS/MainWindow/logo.png);
+background-repeat: no-repeat;
+}
+/*
+#Logo{
+background-image: url(:/SolutionGTS/MainWindow/logo3.png);
+background-repeat: no-repeat;
+background-position: bottom center;
+}*/
+
+#bodywidget{
+	background-color: rgb(188, 215, 231);
+    background-image: url(:/SolutionGTS/background4.png);
+	border: 1px solid; 
+	border-radius: 5px;
+	border-top: 2px groove; 
+	border-color: #a2b7c4;
+}
+
+#stackedWidget{
+	border: 1px solid; 
+	border-top: 2px groove; 
+	border-color: #a2b7c4;
+}
+
+#widget_3{
+background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 150), stop:0.0738636 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 15));
+}
+
+#widget_2{
+background-image: url(:/SolutionGTS/MainWindow/separator.png);
+}
+
+#widget_6{
+background-image: url(:/SolutionGTS/MainWindow/Copyrighting.png);
+background-repeat: no-repeat;
+background-position: top center;
+}
+
+QLabel{
+font: 13px &quot;Myriad Pro&quot;;
+color: #3e3e3e;
+
+}
+
+
+#label{
+font: 13px &quot;Myriad Pro&quot;;
+color: #3e3e3e;
+padding-left: 5px;
+padding-right: 5px;
+padding-bottom: -3px;
+}
+
+#lbUser{
+font: 75 13px &quot;Myriad Pro&quot;;
+color: #19baef;
+padding-left: 5px;
+padding-right: 5px;
+padding-top: -4px;
+}
+
+
+QPushButton {
+border-image: url(:/Resources/simple-button.png) 9 9 9 9;
+border-top: 6px transparent;
+border-bottom: 6px transparent;
+border-right: 6px transparent;
+border-left: 6px transparent;
+font: 13px &quot;Myriad Pro&quot;;
+color: #3e3e3e;
+}
+QPushButton::hover {
+	border-image: url(:/Resources/simple-button-over.png) 9 9 9 9;
+}
+QPushButton::pressed {
+border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>60</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>6</number>
+      </property>
+      <property name="topMargin">
+       <number>4</number>
+      </property>
+      <property name="rightMargin">
+       <number>6</number>
+      </property>
+      <property name="bottomMargin">
+       <number>4</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../res/mtg.qrc">:/Resources/logo.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>194</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_2" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>194</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QPushButton" name="StartButton">
+           <property name="text">
+            <string>Новая игра</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="Body">
+     <property name="styleSheet">
+      <string notr="true">#Body{
+background-color:qlineargradient(spread:reflect, x1:0.534, y1:0.153, x2:0.506605, y2:1, stop:0 rgba(41, 57, 85, 255), stop:1 rgba(255, 255, 255, 255))
+}</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="MTG_PlayerView" name="PlayerViewSecond" native="true"/>
+      </item>
+      <item row="0" column="2" rowspan="3">
+       <widget class="MTG_LogView" name="LogView" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QFrame" name="frame_2">
+        <property name="minimumSize">
+         <size>
+          <width>200</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QFrame" name="frame_3">
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="MTG_PlayerView" name="PlayerViewFirst" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MTG_LogView</class>
+   <extends>QWidget</extends>
+   <header>mtg_log_view.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MTG_PlayerView</class>
+   <extends>QWidget</extends>
+   <header>mtg_player_view.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../res/mtg.qrc"/>
+ </resources>
+ <connections/>
+</ui>

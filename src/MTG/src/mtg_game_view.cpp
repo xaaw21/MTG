@@ -85,8 +85,8 @@ void MTG_GameView::next() {
 
 void MTG_GameView::update() {
 	if (!mGame) return;
-	ui.PhaseLabel->setText(PhaseString(mGame->phase()));
-	ui.RoundLabel->setText(RoundString(mGame->round()));
+	//ui.PhaseLabel->setText(PhaseString(mGame->phase()));
+	//ui.RoundLabel->setText(RoundString(mGame->round()));
 	//if (mGame->state() == MTG_Game::E_StopState) ui.StartButton->setText("Старт игра");
 	//else ui.StartButton->setText("Стоп игра");
 }

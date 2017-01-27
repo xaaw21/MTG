@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
-#include "ui_mtg_game_view.h"
+#include "ui_game_view.h"
 #include "mtg_engine.hpp"
 
 class MTG_GameView : public QWidget, public MTG_Observer

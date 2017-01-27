@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="/Resources">
+    <file>logo.png</file>
+    <file>simple-button.png</file>
+    <file>simple-button-checked.png</file>
+    <file>simple-button-checked-over.png</file>
+    <file>simple-button-over.png</file>
+    <file>top-menu.png</file>
+    <file>background1.png</file>
+    <file>background2.png</file>
+    <file>background3.png</file>
+    <file>background4.png</file>
+  </qresource>
+</RCC>
