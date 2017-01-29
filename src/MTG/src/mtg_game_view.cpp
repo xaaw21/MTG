@@ -3,6 +3,8 @@
 #include <QApplication>
 #include "ui_splash_view.h"
 
+#define TIMEOUT_NEXT_PHASE 5000
+
 /**************************    MTG_GameView    **********************************************/
 
 class SplashView : public QWidget
@@ -128,7 +130,7 @@ void MTG_GameView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap 
 	case E_AttackPhase:  ui.gv_lbl_status->setText("Игроки ходят"); break;
 	case E_FinishPhase: {
 		ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
-		mTimer.start(4000);
+		mTimer.start(TIMEOUT_NEXT_PHASE);
 		break;
 	}
 	}
@@ -142,7 +144,7 @@ void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_Ca
 		auto players = mGame->players();
 		if (players.first->state() == MTG_Player::E_PlayedState && players.second->state() == MTG_Player::E_PlayedState) {
 			ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
-			mTimer.start(1000);
+			mTimer.start(6000);
 		}
 		break;
 	}

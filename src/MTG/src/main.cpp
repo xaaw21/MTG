@@ -2,7 +2,7 @@
 
 #include "mtg_game_view.hpp"
 
-//#define GAME_ROBOTS
+#define GAME_ROBOTS
 
 int main(int argv,char **argc)
 {
@@ -34,13 +34,14 @@ int main(int argv,char **argc)
 
 	
 
-   /*
+   
 	MTG_Deck deck;
 	MTG_CardsView cards_view;
-	cards_view.setCards(deck.cards(10));
-	cards_view.show();
+	cards_view.setCards(deck.cards(4));
+	cards_view.setAlignment(Qt::AlignHCenter);
+	//cards_view.show();
 	view.resize(800,600);
-  */
+  
 
 
 	return app.exec();

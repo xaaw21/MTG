@@ -69,10 +69,12 @@ void MTG_PlayerView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMa
 }
 
 void MTG_PlayerView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
-	if (aPlayer == mPlayer) return;
-	switch (aPhase)
-	{
-	case E_AttackPhase: if (mPlayer->state() == MTG_Player::E_PlayState) open(MTG_Card::E_ProtectionState); break;
+	if (aPlayer = mPlayer) update();
+	else {
+		switch (aPhase)
+		{
+		case E_AttackPhase: if (mPlayer->state() == MTG_Player::E_PlayState) open(MTG_Card::E_ProtectionState); break;
+		}
 	}
 }
 
@@ -83,7 +85,7 @@ void MTG_PlayerView::winEvent(MTG_Player *aPlayerWin) {
 void MTG_PlayerView::play() {
 	if (!mPlayer) return;
 	mPlayer->play(ui.cards_view->checkedCards());
-	update();
+	//update();
 }
 
 void MTG_PlayerView::open() {

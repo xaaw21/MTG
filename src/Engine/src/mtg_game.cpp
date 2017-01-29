@@ -189,7 +189,7 @@ Phase_t MTG_Game::next() {
 	}
 	case E_AttackPhase: {
 		attack_player->mState = MTG_Player::E_PlayState;
-		protected_player->mState = MTG_Player::E_PlayState;
+		protected_player->mState = MTG_Player::E_NoneState;
 		break;
 	}
 	case E_FinishPhase: {
@@ -261,6 +261,16 @@ Phase_t MTG_Game::next() {
 bool MTG_Game::play(MTG_Player *aPlayer, const MTG_CardSet &aCards) {
 	if (aPlayer->mState != MTG_Player::E_PlayState) return false;
 	aPlayer->mState = MTG_Player::E_PlayedState;
+
+	if (aPlayer->mRole == ::E_AttackRole) {
+		switch (mPhase)
+		{
+		case E_AttackPhase: {
+			this->playerNext(aPlayer)->mState = MTG_Player::E_PlayState;
+			break;
+		}
+		}
+	}
 
 	MTG_PlayerEvent *player_event = new MTG_PlayerEvent(mPhase, aPlayer, aCards);
 	player_event->mGame = this;

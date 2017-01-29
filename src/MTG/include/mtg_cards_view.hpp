@@ -19,6 +19,10 @@ public:
 	void setCheckable(bool aCheckable);
 	bool isCheckable() const;
 
+	//TODO: поддерживаются только HCenter и HLeft
+	void setAlignment(Qt::Alignment aAlignment);
+	Qt::Alignment alignment() const;
+
 public Q_SLOTS:
 	bool setChecked(IDCard_t aIDCard, bool aChecked);
 	void clear();
@@ -47,6 +51,7 @@ private:
 	bool mCheckable;
 	QList<Item> mItems;
 	IDCard_t mIDEnter;
+	Qt::Alignment mAlignment;
 };
 
 

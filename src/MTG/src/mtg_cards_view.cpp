@@ -13,7 +13,8 @@ QImage ImageCards[COUNT_CARDS];
 MTG_CardsView::MTG_CardsView(QWidget *aParent)
 	:QWidget(aParent),
 	mCheckable(false),
-	mIDEnter(INVALID_ID_CARD)
+	mIDEnter(INVALID_ID_CARD),
+	mAlignment(Qt::AlignLeft)
 {
 	static bool init = false;
 	if (!init) {
@@ -71,6 +72,15 @@ bool MTG_CardsView::isCheckable() const {
 	return mCheckable;
 }
 
+void MTG_CardsView::setAlignment(Qt::Alignment aAlignment) {
+	mAlignment = aAlignment;
+	relocate();
+}
+
+Qt::Alignment MTG_CardsView::alignment() const {
+	return mAlignment;
+}
+
 bool MTG_CardsView::setChecked(IDCard_t aIDCard, bool aChecked) {
 	for (auto it_cards = mItems.begin(), end_cards = mItems.end(); it_cards != end_cards; it_cards++) {
 		if (aIDCard == it_cards->Card.ID) {
@@ -105,7 +115,6 @@ void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
 		if (aItem.Checked) rect.adjust(0, -CHECK_CARD_SHIFT, 0, -CHECK_CARD_SHIFT);
 		aPainter->drawImage(rect, ImageCards[aItem.Card.ID]);
 		rect.adjust(5,95,-5,-15);
-		//aPainter->drawRect(rect);
 
 		Card_t card = CardFromID(aItem.Card.ID);
 		
@@ -117,7 +126,6 @@ void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
 
 		aPainter->save();
 		
-
 		if (aItem.Card.Health != aItem.Card.protection()) aPainter->setPen(Qt::red);
 		if (aItem.Card.Health <= 0) {
 			QFont f = aPainter->font();
@@ -131,8 +139,6 @@ void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
 
 		rect.translate(0, shift);
 		aPainter->drawText(rect, QString("Cost: %1").arg(card.Cost), QTextOption(Qt::AlignCenter));
-
-		//aPainter->drawText(rect,QString("Attack: %1\nHealth: %2\n Cost: %3").arg(card.Attack).arg(aItem.Card.Health).arg(card.Cost),QTextOption(Qt::AlignCenter));
 	};
 
 	QPainter painter(this);
@@ -196,9 +202,11 @@ void MTG_CardsView::resizeEvent(QResizeEvent *aEvent) {
 	relocate();
 }
 
+#define SPACE_BETWEEN_CARDS 10
+
 void MTG_CardsView::relocate() {
 	if (mItems.isEmpty()) {
-		this->repaint();
+		this->update();
 		return;
 	}
 
@@ -206,37 +214,28 @@ void MTG_CardsView::relocate() {
 	geometry.setHeight(HEIGHT_CARD);
 	geometry.moveCenter(this->rect().center());
 
+	double x = geometry.x();
+	double y = geometry.y();
 
-	double width_card = WIDTH_CARD + 10;
+	double width_card = WIDTH_CARD + SPACE_BETWEEN_CARDS;
+	double need_width = width_card * mItems.size();
+
+	if (mAlignment == Qt::AlignHCenter) {
+		double shift = (geometry.width() - need_width) / 2;
+		if (shift > 0) x += shift;
+	}
+
 	double space_card = (geometry.width() - width_card )/ mItems.size();
 
 	double shift = width_card;
 	if (space_card < width_card) shift = space_card;
 
-	double x = geometry.x();
-	double y = geometry.y();
 	for (auto it_cards = mItems.begin(), end_cards = mItems.end(); it_cards != end_cards; it_cards++) {
 		it_cards->Rect.moveTo(x, y);
 		x += shift;
 	}
 
-	/*
-	double need_width = mItems.size()  * WIDTH_CARD + (mItems.size() - 1) * 5;
-	double shift = WIDTH_CARD + 5;
-	double space = geometry.width() - need_width;
-	if (space < 0) {
-		shift -= space / (mItems.size());
-	}
-
-	double x = geometry.x();
-	double y = geometry.y();
-	for (auto it_cards = mItems.begin(), end_cards = mItems.end(); it_cards != end_cards; it_cards++) {
-		it_cards->Rect.moveTo(x, y);
-		x += shift;
-	}
-	*/
-
-	this->repaint();
+	this->update();
 }
 
 

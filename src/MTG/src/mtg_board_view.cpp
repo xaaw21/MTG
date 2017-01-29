@@ -6,6 +6,9 @@ MTG_BoardView::MTG_BoardView(QWidget *aParent)
 	mPlayers(0,0)
 {
 	ui.setupUi(this);
+
+	ui.CardsViewFirst->setAlignment(Qt::AlignHCenter);
+	ui.CardsViewSecond->setAlignment(Qt::AlignHCenter);
 }
 
 MTG_BoardView::~MTG_BoardView()
