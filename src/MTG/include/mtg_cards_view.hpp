@@ -31,6 +31,7 @@ protected:
 	void paintEvent(QPaintEvent *aEvent);
 	void mousePressEvent(QMouseEvent *aEvent);
 	void mouseMoveEvent(QMouseEvent *aEvent);
+	void leaveEvent(QEvent *aEvent);
 	void resizeEvent(QResizeEvent *aEvent);
 	void relocate();
 

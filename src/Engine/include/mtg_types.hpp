@@ -10,7 +10,7 @@
 
 #define INVALID_ID_CARD -1
 #define COUNT_CARDS 20
-#define IS_VALID_ID_CARD(ID) (ID > 0 && ID <= COUNT_CARDS)
+#define IS_VALID_ID_CARD(ID) (ID >= 0 && ID < COUNT_CARDS)
 
 typedef int8_t IDCard_t;
 typedef int8_t Health_t;

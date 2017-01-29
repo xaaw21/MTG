@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="/Resources">
+    <file>cover.png</file>
+    <file>play.png</file>
+    <file>exit.png</file>
+    <file>exit-over.png</file>
+    <file>exit-push.png</file>
     <file>cards/0.png</file>
     <file>cards/1.png</file>
     <file>cards/2.png</file>

@@ -125,29 +125,17 @@ QScrollBar::add-page, QScrollBar::sub-page {
       </size>
      </property>
      <property name="text">
-      <string>   История действий:</string>
+      <string>   История:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QListWidget" name="History">
-     <property name="textElideMode">
-      <enum>Qt::ElideMiddle</enum>
-     </property>
-     <property name="movement">
-      <enum>QListView::Snap</enum>
-     </property>
      <property name="spacing">
       <number>3</number>
-     </property>
-     <property name="viewMode">
-      <enum>QListView::ListMode</enum>
-     </property>
-     <property name="modelColumn">
-      <number>0</number>
-     </property>
-     <property name="uniformItemSizes">
-      <bool>true</bool>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

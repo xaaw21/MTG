@@ -96,15 +96,43 @@ void MTG_CardsView::refresh() {
 	this->repaint();
 }
 
+#define CHECK_CARD_SHIFT 10
+
 void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
 
 	static std::function<void(QPainter*, const Item&)> paintItem = [](QPainter *aPainter, const Item &aItem) -> void {
 		QRectF rect = aItem.Rect;
-		if (aItem.Checked) rect.adjust(0, -10, 0, -10);
+		if (aItem.Checked) rect.adjust(0, -CHECK_CARD_SHIFT, 0, -CHECK_CARD_SHIFT);
 		aPainter->drawImage(rect, ImageCards[aItem.Card.ID]);
 		rect.adjust(5,95,-5,-15);
 		//aPainter->drawRect(rect);
-		aPainter->drawText(rect,QString("Attack: %1\nHealth: %2\n Cost: %3").arg(aItem.Card.attack()).arg(aItem.Card.Health).arg(aItem.Card.cost()),QTextOption(Qt::AlignCenter));
+
+		Card_t card = CardFromID(aItem.Card.ID);
+		
+		double shift = rect.height() / 3;
+		rect.setHeight(shift);
+
+		aPainter->drawText(rect, QString("Attack: %1").arg(card.Attack), QTextOption(Qt::AlignCenter));
+		rect.translate(0, shift);
+
+		aPainter->save();
+		
+
+		if (aItem.Card.Health != aItem.Card.protection()) aPainter->setPen(Qt::red);
+		if (aItem.Card.Health <= 0) {
+			QFont f = aPainter->font();
+			f.setBold(true);
+			aPainter->setFont(f);
+			aPainter->drawText(rect, QString("Health: Dead"), QTextOption(Qt::AlignCenter));
+		}
+		else aPainter->drawText(rect, QString("Health: %1").arg(aItem.Card.Health), QTextOption(Qt::AlignCenter));
+
+		aPainter->restore();
+
+		rect.translate(0, shift);
+		aPainter->drawText(rect, QString("Cost: %1").arg(card.Cost), QTextOption(Qt::AlignCenter));
+
+		//aPainter->drawText(rect,QString("Attack: %1\nHealth: %2\n Cost: %3").arg(card.Attack).arg(aItem.Card.Health).arg(card.Cost),QTextOption(Qt::AlignCenter));
 	};
 
 	QPainter painter(this);
@@ -132,6 +160,8 @@ void MTG_CardsView::mousePressEvent(QMouseEvent *aEvent) {
 			break;
 		}
 	}
+
+	QWidget::mousePressEvent(aEvent);
 }
 
 void MTG_CardsView::mouseMoveEvent(QMouseEvent *aEvent) {
@@ -149,6 +179,17 @@ void MTG_CardsView::mouseMoveEvent(QMouseEvent *aEvent) {
 		repaint();
 	}
 	
+
+	QWidget::mouseMoveEvent(aEvent);
+}
+
+void MTG_CardsView::leaveEvent(QEvent *aEvent) {
+	if (IS_VALID_ID_CARD(mIDEnter)) {
+		mIDEnter = INVALID_ID_CARD;
+		repaint();
+	}
+
+	QWidget::leaveEvent(aEvent);
 }
 
 void MTG_CardsView::resizeEvent(QResizeEvent *aEvent) {

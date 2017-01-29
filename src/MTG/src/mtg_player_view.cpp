@@ -165,6 +165,8 @@ void MTG_PlayerView::update()
 }
 
 void MTG_PlayerView::checked(IDCard_t aIDCard, bool aChecked) {
+	if (!mGame) return;
+	if (mGame->phase() != ::E_InvocationPhase) return;
 	Card_t card = ::CardFromID(aIDCard);
 	if (aChecked) {
 		if (card.Cost <= mMana) mMana -= card.Cost;

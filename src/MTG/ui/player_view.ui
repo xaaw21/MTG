@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>749</width>
-    <height>217</height>
+    <height>230</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -122,7 +122,10 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>  Информация:</string>
+         <string>Игрок:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -302,6 +305,16 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
               <property name="text">
                <string>Играть</string>
               </property>
+              <property name="icon">
+               <iconset resource="../res/mtg.qrc">
+                <normaloff>:/Resources/play.png</normaloff>:/Resources/play.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
              </widget>
             </item>
             <item row="0" column="0" colspan="3">
@@ -368,7 +381,10 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
          </size>
         </property>
         <property name="text">
-         <string>  Информация:</string>
+         <string>Карты:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

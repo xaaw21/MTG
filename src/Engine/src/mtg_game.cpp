@@ -38,9 +38,8 @@ bool MTG_Game::setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer) {
 	
 	clear();
 	mPlayers = std::pair<MTG_Player*, MTG_Player*>(aFirstPlayer, aSecondPlayer);
-	mPlayers.first->reset(this);
-	mPlayers.second->reset(this);
-
+	aFirstPlayer->mGame = this;
+	aSecondPlayer->mGame = this;
 	return true;
 }
 
@@ -74,8 +73,9 @@ bool MTG_Game::delObserver(IDObserver_t aIDObserver) {
 
 void MTG_Game::clear() {
 	stop();
-	if (mPlayers.first) mPlayers.first->reset(0);
-	if (mPlayers.second) mPlayers.second->reset(0);
+	if (mPlayers.first) mPlayers.first->mGame = 0;
+	if (mPlayers.second) mPlayers.second->mGame = 0;
+
 	mPlayers = std::pair<MTG_Player*, MTG_Player*>(0, 0);
 }
 
@@ -85,6 +85,19 @@ bool MTG_Game::start() {
 	mState = E_StartState;
 	mPhase = E_NonePhase;
 	mRound = 0;
+
+	std::function<void(MTG_Player*)> reset_player = [this](MTG_Player *aPlayer) -> void {
+		aPlayer->mDeck.reset();
+		aPlayer->mDeck.disturb();
+		aPlayer->mCards.clear();
+		aPlayer->mMana = 0;
+		aPlayer->mHealth = 15;
+		aPlayer->mRole = ::E_NoneRole;
+		aPlayer->mState = MTG_Player::E_NoneState;
+	};
+
+	reset_player(mPlayers.first);
+	reset_player(mPlayers.second);
 
 	MTG_GameEvent *game_event = new MTG_GameEvent(mState);
 	game_event->mGame = this;
@@ -97,8 +110,8 @@ bool MTG_Game::stop() {
 	mEvents.clear();
 	if (mState != E_StopState) {
 
-		mPlayers.first->reset(this);
-		mPlayers.second->reset(this);
+		//mPlayers.first->reset(this);
+		//mPlayers.second->reset(this);
 
 		mState = E_StopState;
 		MTG_GameEvent *game_event = new MTG_GameEvent(mState);

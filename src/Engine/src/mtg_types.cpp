@@ -113,7 +113,7 @@ MTG_CardSet MTG_Deck::cards(uint8_t aCount) {
 void MTG_Deck::reset() {
 	clear();
 	reserve(COUNT_CARDS);
-	for (IDCard_t i = 0; i < COUNT_CARDS; ++i) {
+	for (IDCard_t i = COUNT_CARDS - 1; i >= 0; i--) {
 		push_back(i);
 	}
 	//std::list<int> list = { 0,1,2,3,4,5,6,7,6,4 };

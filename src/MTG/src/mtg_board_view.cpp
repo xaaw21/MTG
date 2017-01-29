@@ -33,8 +33,9 @@ void MTG_BoardView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap
 	switch (aPhase)
 	{
 	case E_FinishPhase: {
-		ui.CardsViewFirst->repaint();
-		ui.CardsViewSecond->repaint();
+		MTG_CardMap map = aCards;
+		ui.CardsViewFirst->setCards(map[mPlayers.first]);
+		ui.CardsViewSecond->setCards(map[mPlayers.second]);
 		break;
 	}
 	default: cleanup(); break;

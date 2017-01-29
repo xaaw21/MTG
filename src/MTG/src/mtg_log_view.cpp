@@ -4,25 +4,36 @@
 #include <QTime>
 #include <QPainter>
 
+/**********************************    Function   ******************************************/
+
+QString CardsToString(const MTG_CardSet &aCards) {
+	if (aCards.empty()) return "None";
+	QString str;
+	for (auto it = aCards.begin(), end = aCards.end(); it != end; it++) {
+		Card_t card = CardFromID(it->ID);
+		str += QString("{A: %1, H: %2, C: %3}\n").arg(card.Attack).arg(it->Health).arg(card.Cost);
+	}	
+	return str;
+}
+
+QString CardsToString(const MTG_CardMap &aCards) {
+	QString str;
+	for (auto it = aCards.begin(), end = aCards.end(); it != end; it++) {
+		str += QString("%1:\n%2").arg(QString::fromStdString(it->first->name())).arg(CardsToString(it->second));
+	}
+	return str;
+}
+
+
+/**********************************    LogDelegate   ******************************************/
 
 class LogDelegate : public QItemDelegate
 {
 public:
-	LogDelegate() {}
+	LogDelegate(QObject *aParent = 0):QItemDelegate(aParent){}
 	~LogDelegate() {}
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-		//option.rect
-		//painter->setPen(Qt::white);
-		//painter->setBrush(QColor(255,242,157,150));
-		
-		//painter->drawRoundedRect(option.rect, 8, 8);
-		painter->setRenderHint(QPainter::Antialiasing, true);
-		//QImage img = QImage(":/Resources/simple-button.png");
-		//img = img.scaled(option.rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		//painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
-		//painter->drawImage(option.rect, img);
-
 		QRect rect = option.rect.adjusted(5,0,-5,0);
 		painter->setPen(QPen(QColor(142,155,188),2));
 		painter->setBrush(QColor(219,227,231));
@@ -33,13 +44,14 @@ public:
 	}
 };
 
+/**********************************    MTG_LogView   ******************************************/
 
 MTG_LogView::MTG_LogView(QWidget *aParent)
 	:QWidget(aParent),
 	MTG_Observer()
 {
 	ui.setupUi(this);
-	ui.History->setItemDelegate(new LogDelegate);
+	ui.History->setItemDelegate(new LogDelegate(this));
 }
 
 MTG_LogView::~MTG_LogView()
@@ -69,15 +81,15 @@ void MTG_LogView::gameEvent(MTG_Game::State_t aState) {
 void MTG_LogView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
 	switch (aPhase)
 	{
-	case E_StartPhase: print("Начало боя"); break;
-	case E_InvocationPhase:	print("Призыв существ"); break;
-	case E_AttackPhase: print("Подготовка к бою"); break;
-	case E_FinishPhase:	print("Завершения боя"); break;
+	case E_StartPhase: print(QString("Фаза: Начало\nРаунд: %1\nНовые карты:\n%2").arg(aRound).arg(CardsToString(aCards))); break;
+	case E_InvocationPhase:	print("Фаза: Призыв"); break;
+	case E_AttackPhase: print("Фаза: Атака"); break;
+	case E_FinishPhase:	print("Фаза: Завершение"); break;
 	}
 }
 
 void MTG_LogView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
-	print(QString("Игрок походил: %1").arg(QString::fromStdString(aPlayer->name())));
+	print(QString("%1 походил:\n %2").arg(QString::fromStdString(aPlayer->name())).arg(CardsToString(aCards)));
 }
 
 void MTG_LogView::winEvent(MTG_Player *aPlayerWin) {

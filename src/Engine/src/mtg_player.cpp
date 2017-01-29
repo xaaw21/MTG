@@ -6,7 +6,9 @@
 MTG_Player::MTG_Player()
 	:mGame(0),
 	mMana(0),
-	mHealth(0)
+	mHealth(0),
+	mRole(E_NoneRole),
+    mState(E_NoneState)
 {
 
 }
@@ -129,15 +131,4 @@ void MTG_Player::event(const MTG_Event *aEvent) {
 		break;
 	}
 	}
-}
-
-void MTG_Player::reset(MTG_Game *aGame) {
-	mGame = aGame;
-	mDeck.reset();
-	mDeck.disturb();
-	mCards.clear();
-	mMana = 0;
-	mHealth = 15;
-	mRole = ::E_NoneRole;
-	mState = E_NoneState;
 }

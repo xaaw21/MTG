@@ -1,32 +1,79 @@
 #include "mtg_game_view.hpp"
 
-QString PhaseString(Phase_t aPhase) {
-	QString str;
-	switch (aPhase)
-	{
-	case E_StartPhase: str = "Начало боя"; break;
-	case E_InvocationPhase: str = "Призыв"; break;
-	case E_AttackPhase: str = "Аттака"; break;
-	case E_FinishPhase: str = "Завершение боя"; break;
-	}
+#include <QApplication>
+#include "ui_splash_view.h"
 
-	return "Фаза: " + str;
-}
+/**************************    MTG_GameView    **********************************************/
 
-QString RoundString(Round_t aRound) {
-	return QString("Раунд №%1").arg(aRound);
-}
+class SplashView : public QWidget
+{
+	Q_OBJECT
+public:
+	SplashView(QWidget *aParent = 0, QGraphicsEffect *aEffect = 0);
+	~SplashView();
 
-MTG_GameView::MTG_GameView(QWidget *aParent)
+public Q_SLOTS:
+   void show(const QString &aMessage = QString());
+   void hide();
+
+private:
+	Ui::SplashView ui;
+	QGraphicsEffect *mEffect;
+};
+
+SplashView::SplashView(QWidget *aParent, QGraphicsEffect *aEffect)
 	:QWidget(aParent),
-	MTG_Observer()
+	mEffect(aEffect)
 {
 	ui.setupUi(this);
 
-	connect(ui.StartButton,SIGNAL(clicked()),this,SLOT(start()));
+	connect(ui.sv_btn_ok,SIGNAL(clicked()),this,SLOT(hide()));
+}
 
+SplashView::~SplashView()
+{
+
+}
+void SplashView::show(const QString &aMessage) {
+	if (mEffect) mEffect->setEnabled(true);
+	ui.sp_lbl_msg->setText(aMessage);
+	QWidget::show();
+}
+
+void SplashView::hide() {
+	if (mEffect) mEffect->setEnabled(false);
+	QWidget::hide();
+}
+
+
+/**************************    MTG_GameView    **********************************************/
+
+
+
+MTG_GameView::MTG_GameView(QWidget *aParent)
+	:QWidget(aParent),
+	MTG_Observer(),
+	mSplash(0)
+{
+	ui.setupUi(this);
+
+	mEffect.setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+	mEffect.setBlurRadius(1.8);
+	ui.substrate->setGraphicsEffect(&mEffect);
+
+	ui.gv_btn_group_phase->setId(ui.gv_btn_start_phase,(int)E_StartPhase);
+	ui.gv_btn_group_phase->setId(ui.gv_btn_invocation_phase, (int)E_InvocationPhase);
+	ui.gv_btn_group_phase->setId(ui.gv_btn_attack_phase, (int)E_AttackPhase);
+	ui.gv_btn_group_phase->setId(ui.gv_btn_finish_phase, (int)E_FinishPhase);
+
+	connect(ui.StartButton,SIGNAL(clicked()),this,SLOT(start()));
+	connect(ui.btnLogout, SIGNAL(clicked()), this, SLOT(exit()));
+	
 	mTimer.setSingleShot(true);
 	connect(&mTimer, SIGNAL(timeout()), this, SLOT(next()));
+
+	mSplash = new SplashView(this,&mEffect);
+	mSplash->hide();
 }
 
 MTG_GameView::~MTG_GameView()
@@ -35,12 +82,16 @@ MTG_GameView::~MTG_GameView()
 }
 
 void MTG_GameView::changeGame(MTG_Game *aGame) {
+	ui.gv_lbl_status->clear();
+
 	if(aGame) {
 		auto players = aGame->players();
 		ui.PlayerViewFirst->setPlayer(players.first);
 		ui.PlayerViewSecond->setPlayer(players.second);
 		ui.BoardView->setGame(aGame);
 		ui.LogView->setGame(aGame);
+
+		ui.gv_lbl_status->setText("Начните новую игру");
 	}
 	else {
 		ui.PlayerViewFirst->clear();
@@ -48,28 +99,39 @@ void MTG_GameView::changeGame(MTG_Game *aGame) {
 		ui.BoardView->clear();
 		ui.LogView->clear();
 	}
+
+	update(::E_NonePhase);
 }
 
 void MTG_GameView::gameEvent(MTG_Game::State_t aState) {
-	  
+	switch (aState)
+	{
+	case MTG_Game::E_StartState: {
+		ui.gv_lbl_status->setText("Запуск игры");
+		break;
+	}
+	}
 }
 
 void MTG_GameView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
+	update(aPhase);
+
 	switch (aPhase)
 	{
 	case E_StartPhase: {
+		ui.gv_lbl_round->setText(QString("Раунд №%1").arg(aRound));
+		ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
 		mTimer.start(1000);
 		break;
 	}
-	case E_InvocationPhase:  break;
-	case E_AttackPhase:  break;
+	case E_InvocationPhase: 
+	case E_AttackPhase:  ui.gv_lbl_status->setText("Игроки ходят"); break;
 	case E_FinishPhase: {
+		ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
 		mTimer.start(4000);
 		break;
 	}
 	}
-
-	update();
 }
 
 void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
@@ -79,6 +141,7 @@ void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_Ca
 	case E_AttackPhase: {
 		auto players = mGame->players();
 		if (players.first->state() == MTG_Player::E_PlayedState && players.second->state() == MTG_Player::E_PlayedState) {
+			ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
 			mTimer.start(1000);
 		}
 		break;
@@ -87,19 +150,37 @@ void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_Ca
 }
 
 void MTG_GameView::winEvent(MTG_Player *aPlayerWin) {
+	QString str_win_player = "Ничья";
+	if (aPlayerWin) str_win_player = QString::fromStdString(aPlayerWin->name());
+	ui.gv_lbl_status->setText(QString("Игра закончена.\nПобедитель: %1").arg(str_win_player));
+	mSplash->show(QString("Игра закончена.\nПобедитель: %1").arg(str_win_player));
+}
 
+void MTG_GameView::resizeEvent(QResizeEvent *aEvent) {
+	mSplash->resize(this->size());
 }
 
 void MTG_GameView::next() {
 	mGame->next();
 }
 
-void MTG_GameView::update() {
-	if (!mGame) return;
-	//ui.PhaseLabel->setText(PhaseString(mGame->phase()));
-	//ui.RoundLabel->setText(RoundString(mGame->round()));
-	//if (mGame->state() == MTG_Game::E_StopState) ui.StartButton->setText("Старт игра");
-	//else ui.StartButton->setText("Стоп игра");
+void MTG_GameView::update(Phase_t Phase) {
+	switch (Phase)
+	{
+	case E_NonePhase: {
+		ui.gv_btn_group_phase->setExclusive(false);
+		QAbstractButton *btn = ui.gv_btn_group_phase->checkedButton();
+		if(btn) btn->setChecked(false);
+		ui.gv_lbl_round->setText("Информация");
+		break;
+	} 
+	default: {
+		ui.gv_btn_group_phase->setExclusive(true);
+		QAbstractButton *btn = ui.gv_btn_group_phase->button((int)Phase);
+		if(btn) btn->setChecked(true);
+		break;
+	}
+	}
 }
 
 void MTG_GameView::start() {
@@ -107,3 +188,9 @@ void MTG_GameView::start() {
 	mGame->start();
 	mTimer.start(1000);
 }
+
+void MTG_GameView::exit() {
+	qApp->exit();
+}
+
+#include "mtg_game_view.moc"

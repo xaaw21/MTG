@@ -42,9 +42,6 @@ protected:
 	virtual bool protection(const MTG_CardSet &aAttackCards) = 0;
 
 private:
-	void reset(MTG_Game *aGame);
-
-private:
 	MTG_Game *mGame;
 	std::string mName;
 	Mana_t mMana;
