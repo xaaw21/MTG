@@ -1,5 +1,27 @@
 <RCC>
   <qresource prefix="/Resources">
+    <file>cards/0.png</file>
+    <file>cards/1.png</file>
+    <file>cards/2.png</file>
+    <file>cards/3.png</file>
+    <file>cards/4.png</file>
+    <file>cards/5.png</file>
+    <file>cards/6.png</file>
+    <file>cards/7.png</file>
+    <file>cards/8.png</file>
+    <file>cards/9.png</file>
+    <file>cards/10.png</file>
+    <file>cards/11.png</file>
+    <file>cards/12.png</file>
+    <file>cards/13.png</file>
+    <file>cards/14.png</file>
+    <file>cards/15.png</file>
+    <file>cards/16.png</file>
+    <file>cards/17.png</file>
+    <file>cards/18.png</file>
+    <file>cards/19.png</file>
+    <file>down-scroll.png</file>
+    <file>up-scroll.png</file>
     <file>logo.png</file>
     <file>simple-button.png</file>
     <file>simple-button-checked.png</file>

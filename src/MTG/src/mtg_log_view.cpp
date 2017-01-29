@@ -13,12 +13,23 @@ public:
 
 	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
 		//option.rect
-		painter->setPen(Qt::white);
-		painter->setBrush(QColor(255,242,157,150));
+		//painter->setPen(Qt::white);
+		//painter->setBrush(QColor(255,242,157,150));
 		
-		painter->drawRoundedRect(option.rect, 8, 8);
+		//painter->drawRoundedRect(option.rect, 8, 8);
+		painter->setRenderHint(QPainter::Antialiasing, true);
+		//QImage img = QImage(":/Resources/simple-button.png");
+		//img = img.scaled(option.rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		//painter->setCompositionMode(QPainter::CompositionMode_SourceOver);
+		//painter->drawImage(option.rect, img);
+
+		QRect rect = option.rect.adjusted(5,0,-5,0);
+		painter->setPen(QPen(QColor(142,155,188),2));
+		painter->setBrush(QColor(219,227,231));
+		painter->drawRoundedRect(rect,2,2);
+
 		painter->setPen(QColor(41, 57, 85));
-		painter->drawText(option.rect, index.data().toString(),QTextOption(Qt::AlignCenter));
+		painter->drawText(rect, index.data().toString(),QTextOption(Qt::AlignCenter));
 	}
 };
 
@@ -44,8 +55,9 @@ void MTG_LogView::gameEvent(MTG_Game::State_t aState) {
 	switch (aState)
 	{
 	case MTG_Game::E_StartState: {
-		print("Начало игры");
 		refresh();
+		print("Начало игры");
+		break;
 	}
 	case MTG_Game::E_StopState: {
 		print("Конец игры");
@@ -65,7 +77,7 @@ void MTG_LogView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &
 }
 
 void MTG_LogView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
-	print(QString("Ход игрока: %1").arg(QString::fromStdString(aPlayer->name())));
+	print(QString("Игрок походил: %1").arg(QString::fromStdString(aPlayer->name())));
 }
 
 void MTG_LogView::winEvent(MTG_Player *aPlayerWin) {

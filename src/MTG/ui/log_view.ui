@@ -14,29 +14,118 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#LogView{border:9px rgb(142, 155, 188);}</string>
+   <string notr="true">#LogView{
+	border:2px solid  rgb(142,155,188);
+}
+
+#lv_label{
+	background-color: rgb(72, 96, 130);
+	color: white;
+}
+
+#History{
+border: none;
+}
+
+
+
+QScrollBar { 
+	margin: 7px 0px 7px 0px;
+	background-color:qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:1, stop:0 rgba(116, 116, 116, 255), stop:0.1 rgba(163, 163, 163, 255), stop:0.2 rgba(186, 186, 186, 255), stop:1 rgba(186, 186, 186, 255));
+ 	 width: 16px;
+		border-radius: 3px;
+	border: 1px solid #a8a8a8;
+	
+}
+QScrollBar:vertical { 
+width:7px;
+}
+
+QScrollBar::handle::vertical{
+	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(16, 158, 204, 255), stop:1 rgba(20, 200, 255, 255));
+	border-radius: 2px;
+	border: 1px solid #1c9cc5;
+}
+
+
+
+QScrollBar::add-line{
+	border: none; 
+	height: 7px;
+	subcontrol-position:bottom;
+	subcontrol-origin: margin;
+	position: absolute;
+
+}
+QScrollBar::sub-line{
+	border: none; 
+	height: 7px;
+	subcontrol-position:top;
+	subcontrol-origin: margin;
+	position: absolute;
+
+}
+QScrollBar::up-arrow {
+  	width: 7px;
+    height: 7px;
+	
+	
+	background-image: url(:/Resources/up-scroll.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	border:none;
+
+}
+
+
+QScrollBar::down-arrow{
+  	width: 7px;
+    height: 7px;
+	background-image: url(:/Resources/down-scroll.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	border:none;
+
+}
+
+
+QScrollBar::add-page, QScrollBar::sub-page {
+	border: none;
+	background-color:qlineargradient(spread:pad, x1:0, y1:1, x2:1, y2:1, stop:0 rgba(116, 116, 116, 255), stop:0.1 rgba(163, 163, 163, 255), stop:0.2 rgba(186, 186, 186, 255), stop:1 rgba(186, 186, 186, 255));
+}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="lv_label">
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>20</height>
+       <height>25</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>20</height>
+       <height>25</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(77, 96, 130);
-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="text">
-      <string>  История действий</string>
+      <string>   История действий:</string>
      </property>
     </widget>
    </item>
@@ -67,6 +156,8 @@ color: rgb(255, 255, 255);</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/mtg.qrc"/>
+ </resources>
  <connections/>
 </ui>

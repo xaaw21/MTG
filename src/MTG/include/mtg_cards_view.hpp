@@ -30,6 +30,7 @@ Q_SIGNALS:
 protected:
 	void paintEvent(QPaintEvent *aEvent);
 	void mousePressEvent(QMouseEvent *aEvent);
+	void mouseMoveEvent(QMouseEvent *aEvent);
 	void resizeEvent(QResizeEvent *aEvent);
 	void relocate();
 
@@ -42,9 +43,9 @@ private:
 		QRectF Rect;
 	};
 
-	MTG_Card::State_t mType;
 	bool mCheckable;
 	QList<Item> mItems;
+	IDCard_t mIDEnter;
 };
 
 

@@ -19,7 +19,11 @@ protected:
 	void winEvent(MTG_Player *aPlayerWin);
 
 private:
+	void cleanup();
+
+private:
 	Ui::BoardView ui;
+	std::pair<MTG_Player*,MTG_Player*> mPlayers;
 };
 
 #endif //MTG_BOARD_VIEW_HPP

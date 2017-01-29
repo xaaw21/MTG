@@ -19,4 +19,4 @@ class MTGPackage(CMakePackage):
     }
     build_policy = "missing"
     exports = "*"
-    requires = "qt/5.7.0@rit/stable"
+    requires = "qt/5.7.0@anton/stable"

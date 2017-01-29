@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>588</height>
+    <width>1242</width>
+    <height>966</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,11 @@
 
 }
 
+#cover{
+background-color: rgb(255, 255, 255);
+border-radius: 5px;
+}
+
 #frame {
 	border-color: rgb(255, 255, 255);
 	background-color: rgb(250, 250, 255);
@@ -32,7 +37,7 @@
 /*border-radius: 5px;*/
 }
 
-QWidget#widget,#widget_2
+QWidget#widget,#widget_2,#panel_state
 {
 border-image: url(:/Resources/top-menu.png);
 border-top: 9px transparent;
@@ -41,16 +46,6 @@ border-right: 9px transparent;
 border-left: 9px transparent;
 }
 
-#Logotype{
-border-image: url(:/SolutionGTS/MainWindow/logo.png);
-background-repeat: no-repeat;
-}
-/*
-#Logo{
-background-image: url(:/SolutionGTS/MainWindow/logo3.png);
-background-repeat: no-repeat;
-background-position: bottom center;
-}*/
 
 #bodywidget{
 	background-color: rgb(188, 215, 231);
@@ -61,47 +56,12 @@ background-position: bottom center;
 	border-color: #a2b7c4;
 }
 
-#stackedWidget{
-	border: 1px solid; 
-	border-top: 2px groove; 
-	border-color: #a2b7c4;
-}
 
-#widget_3{
-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 255, 255, 150), stop:0.0738636 rgba(0, 0, 0, 20), stop:1 rgba(255, 255, 255, 15));
-}
-
-#widget_2{
-background-image: url(:/SolutionGTS/MainWindow/separator.png);
-}
-
-#widget_6{
-background-image: url(:/SolutionGTS/MainWindow/Copyrighting.png);
-background-repeat: no-repeat;
-background-position: top center;
-}
 
 QLabel{
 font: 13px &quot;Myriad Pro&quot;;
 color: #3e3e3e;
 
-}
-
-
-#label{
-font: 13px &quot;Myriad Pro&quot;;
-color: #3e3e3e;
-padding-left: 5px;
-padding-right: 5px;
-padding-bottom: -3px;
-}
-
-#lbUser{
-font: 75 13px &quot;Myriad Pro&quot;;
-color: #19baef;
-padding-left: 5px;
-padding-right: 5px;
-padding-top: -4px;
 }
 
 
@@ -172,16 +132,30 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
        <number>4</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string/>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="pixmap">
-         <pixmap resource="../res/mtg.qrc">:/Resources/logo.png</pixmap>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
         </property>
-        <property name="scaledContents">
-         <bool>true</bool>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_2" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3"/>
        </widget>
       </item>
       <item>
@@ -198,25 +172,16 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
        </spacer>
       </item>
       <item>
-       <widget class="QWidget" name="widget_2" native="true">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string/>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="pixmap">
+         <pixmap resource="../res/mtg.qrc">:/Resources/logo.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -251,6 +216,22 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
         </layout>
        </widget>
       </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
@@ -258,7 +239,7 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
     <widget class="QFrame" name="Body">
      <property name="styleSheet">
       <string notr="true">#Body{
-background-color:qlineargradient(spread:reflect, x1:0.534, y1:0.153, x2:0.506605, y2:1, stop:0 rgba(41, 57, 85, 255), stop:1 rgba(255, 255, 255, 255))
+background-color:rgba(41, 57, 85, 255);
 }</string>
      </property>
      <property name="frameShape">
@@ -269,7 +250,20 @@ background-color:qlineargradient(spread:reflect, x1:0.534, y1:0.153, x2:0.506605
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0" colspan="2">
-       <widget class="MTG_PlayerView" name="PlayerViewSecond" native="true"/>
+       <widget class="MTG_PlayerView" name="PlayerViewSecond" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>220</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>220</height>
+         </size>
+        </property>
+       </widget>
       </item>
       <item row="0" column="2" rowspan="3">
        <widget class="MTG_LogView" name="LogView" native="true">
@@ -281,40 +275,216 @@ background-color:qlineargradient(spread:reflect, x1:0.534, y1:0.153, x2:0.506605
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QFrame" name="frame_2">
+      <item row="2" column="0" colspan="2">
+       <widget class="MTG_PlayerView" name="PlayerViewFirst" native="true">
         <property name="minimumSize">
          <size>
-          <width>200</width>
-          <height>0</height>
+          <width>0</width>
+          <height>220</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
-          <height>16777215</height>
+          <width>16777215</width>
+          <height>220</height>
          </size>
         </property>
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QFrame" name="frame_3">
-        <property name="frameShape">
-         <enum>QFrame::Box</enum>
+      <item row="1" column="0" colspan="2">
+       <widget class="QWidget" name="cover" native="true">
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <spacer name="verticalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>25</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0">
+          <widget class="QWidget" name="panel_state" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>202</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>202</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>45</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Раунд</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_3">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_4">
+              <property name="text">
+               <string>PushButton</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>45</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <spacer name="verticalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>25</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1" rowspan="3">
+          <widget class="MTG_BoardView" name="BoardView" native="true"/>
+         </item>
+        </layout>
+        <zorder>panel_state</zorder>
+        <zorder>verticalSpacer_7</zorder>
+        <zorder>verticalSpacer_8</zorder>
+        <zorder>BoardView</zorder>
        </widget>
-      </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="MTG_PlayerView" name="PlayerViewFirst" native="true"/>
       </item>
      </layout>
     </widget>
@@ -332,6 +502,12 @@ background-color:qlineargradient(spread:reflect, x1:0.534, y1:0.153, x2:0.506605
    <class>MTG_PlayerView</class>
    <extends>QWidget</extends>
    <header>mtg_player_view.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MTG_BoardView</class>
+   <extends>QWidget</extends>
+   <header>mtg_board_view.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

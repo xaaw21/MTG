@@ -6,14 +6,30 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
-    <height>240</height>
+    <width>784</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MTG_Game</string>
   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="MTG_CardsView" name="CardsViewSecond" native="true"/>
+   </item>
+   <item>
+    <widget class="MTG_CardsView" name="CardsViewFirst" native="true"/>
+   </item>
+  </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MTG_CardsView</class>
+   <extends>QWidget</extends>
+   <header>mtg_cards_view.hpp</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

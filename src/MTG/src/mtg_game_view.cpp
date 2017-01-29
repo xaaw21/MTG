@@ -23,20 +23,31 @@ MTG_GameView::MTG_GameView(QWidget *aParent)
 {
 	ui.setupUi(this);
 
+	connect(ui.StartButton,SIGNAL(clicked()),this,SLOT(start()));
+
 	mTimer.setSingleShot(true);
 	connect(&mTimer, SIGNAL(timeout()), this, SLOT(next()));
 }
 
 MTG_GameView::~MTG_GameView()
 {
-
+	
 }
 
 void MTG_GameView::changeGame(MTG_Game *aGame) {
-	auto players = aGame->players();
-	ui.PlayerViewFirst->setPlayer(players.first);
-	ui.PlayerViewSecond->setPlayer(players.second);
-	ui.LogView->setGame(aGame);
+	if(aGame) {
+		auto players = aGame->players();
+		ui.PlayerViewFirst->setPlayer(players.first);
+		ui.PlayerViewSecond->setPlayer(players.second);
+		ui.BoardView->setGame(aGame);
+		ui.LogView->setGame(aGame);
+	}
+	else {
+		ui.PlayerViewFirst->clear();
+		ui.PlayerViewSecond->clear();
+		ui.BoardView->clear();
+		ui.LogView->clear();
+	}
 }
 
 void MTG_GameView::gameEvent(MTG_Game::State_t aState) {
@@ -89,4 +100,10 @@ void MTG_GameView::update() {
 	//ui.RoundLabel->setText(RoundString(mGame->round()));
 	//if (mGame->state() == MTG_Game::E_StopState) ui.StartButton->setText("Старт игра");
 	//else ui.StartButton->setText("Стоп игра");
+}
+
+void MTG_GameView::start() {
+	if (!mGame) return;
+	mGame->start();
+	mTimer.start(1000);
 }

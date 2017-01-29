@@ -10,7 +10,7 @@ int main(int argv,char **argc)
 	robot.setName("Robot");
 
 	MTG_Robot robot2;
-	robot.setName("Robot2");
+	robot2.setName("Robot2");
 
 	MTG_Human human;
 	human.setName("Human");
@@ -22,8 +22,12 @@ int main(int argv,char **argc)
 	view.setGame(&game);
 	view.show();
 
-	game.start();
-	game.next();
+
+	MTG_Deck deck;
+	MTG_CardsView cards_view;
+	cards_view.setCards(deck.cards(10));
+	//cards_view.show();
+
 
 	//view.resize(800,600);
 

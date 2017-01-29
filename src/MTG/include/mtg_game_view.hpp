@@ -22,6 +22,7 @@ protected:
 
 private Q_SLOTS:
 	void next();
+	void start();
 
 private:
 	void update();

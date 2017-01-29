@@ -33,8 +33,8 @@ Phase_t MTG_Game::phase() const {
 }
 
 bool MTG_Game::setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer) {
-	if (mState != E_StopState) return false;
-	if (!aFirstPlayer || !aSecondPlayer) return false;
+	//if (mState != E_StopState) return false;
+	if (!aFirstPlayer || !aSecondPlayer || aFirstPlayer == aSecondPlayer) return false;
 	
 	clear();
 	mPlayers = std::pair<MTG_Player*, MTG_Player*>(aFirstPlayer, aSecondPlayer);

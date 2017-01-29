@@ -7,10 +7,23 @@
 #define HEIGHT_CARD 150
 #define SIZE_CARD QSize(WIDTH_CARD,HEIGHT_CARD)
 
-MTG_CardsView::MTG_CardsView(QWidget *aParent)
-	:QWidget(aParent)
-{
 
+QImage ImageCards[COUNT_CARDS];
+
+MTG_CardsView::MTG_CardsView(QWidget *aParent)
+	:QWidget(aParent),
+	mCheckable(false),
+	mIDEnter(INVALID_ID_CARD)
+{
+	static bool init = false;
+	if (!init) {
+		for (int i = 0; i < COUNT_CARDS; i++) {
+			ImageCards[i] = QImage(QString(":/Resources/cards/%1.png").arg(i));
+		}
+		init = true;
+	}
+
+	this->setMouseTracking(true);
 }
 
 MTG_CardsView::~MTG_CardsView()
@@ -72,6 +85,7 @@ bool MTG_CardsView::setChecked(IDCard_t aIDCard, bool aChecked) {
 
 void MTG_CardsView::clear() {
 	mItems.clear();
+	this->repaint();
 }
 
 void MTG_CardsView::refresh() {
@@ -87,15 +101,24 @@ void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
 	static std::function<void(QPainter*, const Item&)> paintItem = [](QPainter *aPainter, const Item &aItem) -> void {
 		QRectF rect = aItem.Rect;
 		if (aItem.Checked) rect.adjust(0, -10, 0, -10);
-		aPainter->drawRect(rect);
-		aPainter->drawText(rect, QString::number(aItem.Card.ID), QTextOption(Qt::AlignCenter));
+		aPainter->drawImage(rect, ImageCards[aItem.Card.ID]);
+		rect.adjust(5,95,-5,-15);
+		//aPainter->drawRect(rect);
+		aPainter->drawText(rect,QString("Attack: %1\nHealth: %2\n Cost: %3").arg(aItem.Card.attack()).arg(aItem.Card.Health).arg(aItem.Card.cost()),QTextOption(Qt::AlignCenter));
 	};
 
 	QPainter painter(this);
-	//painter.setBrush(Qt::red);
-	painter.drawRect(this->rect());
+	Item item_enter;
 	for (auto it_cards = mItems.begin(), end_cards = mItems.end(); it_cards != end_cards; it_cards++) {
+		if (it_cards->Card.ID == mIDEnter) {
+			item_enter = *it_cards;
+			continue;
+		}
 		paintItem(&painter, *it_cards);
+	}
+
+	if (IS_VALID_ID_CARD(mIDEnter)) {
+		paintItem(&painter, item_enter);
 	}
 }
 
@@ -111,17 +134,52 @@ void MTG_CardsView::mousePressEvent(QMouseEvent *aEvent) {
 	}
 }
 
+void MTG_CardsView::mouseMoveEvent(QMouseEvent *aEvent) {
+	for (auto it_cards = mItems.rbegin(), end_cards = mItems.rend(); it_cards != end_cards; it_cards++) {
+		if (it_cards->Rect.contains(aEvent->pos())) {
+			if (mIDEnter == it_cards->Card.ID) return;
+			mIDEnter = it_cards->Card.ID;
+			repaint();
+			return;
+		}
+	}
+
+	if (IS_VALID_ID_CARD(mIDEnter)) {
+		mIDEnter = INVALID_ID_CARD;
+		repaint();
+	}
+	
+}
+
 void MTG_CardsView::resizeEvent(QResizeEvent *aEvent) {
 	relocate();
 }
 
 void MTG_CardsView::relocate() {
+	if (mItems.isEmpty()) {
+		this->repaint();
+		return;
+	}
+
 	QRect geometry = this->rect();
-	geometry.adjust(15, 0, -15, 0);
 	geometry.setHeight(HEIGHT_CARD);
 	geometry.moveCenter(this->rect().center());
 
 
+	double width_card = WIDTH_CARD + 10;
+	double space_card = (geometry.width() - width_card )/ mItems.size();
+
+	double shift = width_card;
+	if (space_card < width_card) shift = space_card;
+
+	double x = geometry.x();
+	double y = geometry.y();
+	for (auto it_cards = mItems.begin(), end_cards = mItems.end(); it_cards != end_cards; it_cards++) {
+		it_cards->Rect.moveTo(x, y);
+		x += shift;
+	}
+
+	/*
 	double need_width = mItems.size()  * WIDTH_CARD + (mItems.size() - 1) * 5;
 	double shift = WIDTH_CARD + 5;
 	double space = geometry.width() - need_width;
@@ -135,6 +193,7 @@ void MTG_CardsView::relocate() {
 		it_cards->Rect.moveTo(x, y);
 		x += shift;
 	}
+	*/
 
 	this->repaint();
 }
