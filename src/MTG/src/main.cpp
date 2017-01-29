@@ -27,11 +27,9 @@ int main(int argv,char **argc)
 #endif
 
 	MTG_GameView view;
-	view.setMinimumSize(800, 600);
 	view.setGame(&game);
-	
-	view.show();
-
+	view.showMaximized();
+	//view.show();
 	
 
    
@@ -40,7 +38,7 @@ int main(int argv,char **argc)
 	cards_view.setCards(deck.cards(4));
 	cards_view.setAlignment(Qt::AlignHCenter);
 	//cards_view.show();
-	view.resize(800,600);
+	//view.resize(1000,1000);
   
 
 

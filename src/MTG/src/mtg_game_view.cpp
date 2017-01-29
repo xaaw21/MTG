@@ -3,7 +3,8 @@
 #include <QApplication>
 #include "ui_splash_view.h"
 
-#define TIMEOUT_NEXT_PHASE 5000
+#define TIMEOUT_NEXT_PHASE 2000
+#define TIMEOUT_NEXT_PHASE_FINISH 5000
 
 /**************************    MTG_GameView    **********************************************/
 
@@ -123,14 +124,14 @@ void MTG_GameView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap 
 	case E_StartPhase: {
 		ui.gv_lbl_round->setText(QString("Раунд №%1").arg(aRound));
 		ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
-		mTimer.start(1000);
+		mTimer.start(TIMEOUT_NEXT_PHASE);
 		break;
 	}
 	case E_InvocationPhase: 
 	case E_AttackPhase:  ui.gv_lbl_status->setText("Игроки ходят"); break;
 	case E_FinishPhase: {
 		ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
-		mTimer.start(TIMEOUT_NEXT_PHASE);
+		mTimer.start(TIMEOUT_NEXT_PHASE_FINISH);
 		break;
 	}
 	}
@@ -144,7 +145,7 @@ void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_Ca
 		auto players = mGame->players();
 		if (players.first->state() == MTG_Player::E_PlayedState && players.second->state() == MTG_Player::E_PlayedState) {
 			ui.gv_lbl_status->setText("Переход к следующей фазе.\nЖдите");
-			mTimer.start(6000);
+			mTimer.start(TIMEOUT_NEXT_PHASE);
 		}
 		break;
 	}

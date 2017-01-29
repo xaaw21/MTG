@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>749</width>
-    <height>230</height>
+    <height>239</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -478,12 +478,18 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pv_btn_invocation">
+             <widget class="QPushButton" name="pv_btn_open">
               <property name="text">
-               <string>Призыв</string>
+               <string>В строю</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+              <property name="flat">
+               <bool>false</bool>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">buttonGroup</string>
@@ -507,18 +513,19 @@ border-image: url(:/Resources/simple-button-checked-over.png) 9 9 9 9;
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="pv_btn_open">
+             <widget class="Line" name="line_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pv_btn_invocation">
               <property name="text">
-               <string>В строю</string>
+               <string>Призыв</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
               </property>
               <attribute name="buttonGroup">
                <string notr="true">buttonGroup</string>
