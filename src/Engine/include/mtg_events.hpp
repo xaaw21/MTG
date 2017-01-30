@@ -6,6 +6,13 @@
 class MTG_Player;
 class MTG_Game;
 
+/*************************************
+ *
+ * Здесь собраны все события которые может отправлять игра(MTG_Game) своим наблюдателям
+ *
+ ************************************/
+
+//Базовый класс события
 class MTG_ENGINE_EXPORT MTG_Event
 {
 	friend MTG_Game;
@@ -20,17 +27,20 @@ public:
 		E_WinEvent
 	};
 
-	MTG_Event(Type aType);
 	virtual ~MTG_Event();
 
 	Type type() const;
 	const MTG_Game *game() const;
+
+protected:
+	MTG_Event(Type aType);
 
 private:
 	Type mType;
 	MTG_Game *mGame;
 };
 
+//Сосбытие состояния игры(Старт - Стоп)
 class MTG_ENGINE_EXPORT MTG_GameEvent : public MTG_Event
 {
 public:
@@ -43,6 +53,7 @@ private:
 	int mState;
 };
 
+//Событие начала новой фазы
 class MTG_ENGINE_EXPORT MTG_PhaseEvent : public MTG_Event
 {
 public:
@@ -59,6 +70,7 @@ private:
 	MTG_CardMap mCards;
 };
 
+//Событие игрока - игрок походил
 class MTG_ENGINE_EXPORT MTG_PlayerEvent : public MTG_Event
 {
 public:
@@ -75,6 +87,7 @@ private:
 	MTG_CardSet mCards;
 };
 
+//Событие обозначающее победу одного из игроков, либо ничью
 class MTG_ENGINE_EXPORT MTG_WinEvent : public MTG_Event
 {
 public:

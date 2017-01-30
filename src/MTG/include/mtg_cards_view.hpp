@@ -5,6 +5,12 @@
 #include <QList>
 #include "mtg_engine.hpp"
 
+/*************************************
+ *
+ * Графическое представление набора карт 
+ *
+ ************************************/
+
 class MTG_CardsView	: public QWidget
 {
 	Q_OBJECT

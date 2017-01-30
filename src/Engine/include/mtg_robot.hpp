@@ -3,6 +3,12 @@
 
 #include "mtg_player.hpp"
 
+/*************************************
+ *
+ * Реализация Игрока - Робота с примитивной логикой игры
+ *
+ ************************************/
+
 class MTG_ENGINE_EXPORT MTG_Robot : public MTG_Player
 {
 public:

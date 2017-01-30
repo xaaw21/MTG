@@ -5,6 +5,12 @@
 #include "ui_player_view.h"
 #include "mtg_engine.hpp"
 
+/*************************************
+ *
+ * Графическое представление панели игрока(состояние и набор карт)
+ *
+ ************************************/
+
 class MTG_PlayerView : public QWidget, protected MTG_Observer
 {
 	Q_OBJECT

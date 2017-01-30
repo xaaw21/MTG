@@ -8,6 +8,12 @@
 #include <vector>
 #include <map>
 
+/*************************************
+ *
+ * Базовые структуры и определения 
+ *
+ ************************************/
+
 #define INVALID_ID_CARD -1
 #define COUNT_CARDS 20
 #define IS_VALID_ID_CARD(ID) (ID >= 0 && ID < COUNT_CARDS)

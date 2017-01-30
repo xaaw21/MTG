@@ -2,6 +2,12 @@
 #define MTG_GLOBAL_HPP
 
 
+/*************************************
+ *
+ * Общие декларации
+ *
+ ************************************/
+
 #ifdef MTG_STATIC
 	#define MTG_DECL_EXPORT
 	#define MTG_DECL_IMPORT

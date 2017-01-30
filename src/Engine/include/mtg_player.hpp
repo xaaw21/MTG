@@ -7,6 +7,13 @@
 class MTG_Game;
 class MTG_Event;
 
+/*************************************
+ *
+ * Абстрактный класс игрока. Содержит данные реализую модель сокрытия.
+ * Взаимодействует с игрой(MTG_Game). 
+ *
+ ************************************/
+
 class MTG_ENGINE_EXPORT MTG_Player
 {
 	friend MTG_Game;
@@ -33,13 +40,13 @@ public:
 	void setName(const std::string &aName);
 	std::string name() const;
 	
-	bool play(const MTG_CardSet &aCards = MTG_CardSet());
+	bool play(const MTG_CardSet &aCards = MTG_CardSet()); //Игрок играет 
 
 protected:
-	virtual void event(const MTG_Event *aEvent);
-	virtual bool invocation() = 0;
-	virtual bool attack() = 0;				    
-	virtual bool protection(const MTG_CardSet &aAttackCards) = 0;
+	virtual void event(const MTG_Event *aEvent); //обработчик событий игры
+	virtual bool invocation() = 0; //Вызывается, когда игрок должен привать существ
+	virtual bool attack() = 0; //Вызывается, когда игрок должен атаковать				    
+	virtual bool protection(const MTG_CardSet &aAttackCards) = 0; //Вызывается, когда игрок должен защищаться
 
 private:
 	MTG_Game *mGame;

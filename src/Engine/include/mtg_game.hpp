@@ -14,6 +14,14 @@ class MTG_Event;
 typedef int IDObserver_t;
 typedef std::function<void(const MTG_Event*)> Observer_t;
 
+/*************************************
+ *
+ * Класс игры.Здесь живет вся логика.
+ * Игра взаимодействует с абстракцией игрока (MTG_Player)
+ * Следить за состоянием игры можно посредство регистрации наблюдателя, которому будут отсылаться события игры. 
+ *
+ ************************************/
+
 class MTG_ENGINE_EXPORT MTG_Game
 {
 	friend MTG_Player;
@@ -31,24 +39,24 @@ public:
 	Round_t round() const;
 	Phase_t phase() const;
 	
-	bool setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer);
+	bool setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer); //устанавливаем игроков
 	std::pair<MTG_Player*, MTG_Player*> players() const;
 	MTG_Player* player(Role_t aRole) const;
 	MTG_Player* playerNext(const MTG_Player *aPlayer) const;
 
-	IDObserver_t addObserver(const Observer_t &aObserver);
+	IDObserver_t addObserver(const Observer_t &aObserver); //регистрируем наблюдателя - функтор
 	bool delObserver(IDObserver_t aIDObserver);
 
 	void clear();	//terminated
-	bool start();
-	bool stop();
-	Phase_t next();
+	bool start();   //старт игра
+	bool stop();    //стоп игра
+	Phase_t next(); //переход к следующей фазе - возвращает новую фазу
 
 protected:
 	virtual void event(const MTG_Event *aEvent);
 
 private:
-	bool play(MTG_Player *aPlayer,const MTG_CardSet &aCards);
+	bool play(MTG_Player *aPlayer,const MTG_CardSet &aCards); //игрок играет
 
 private:
 	State_t mState;

@@ -4,6 +4,11 @@
 #include "ui_board_view.h"
 #include "mtg_engine.hpp"
 
+/*************************************
+ *
+ * Графическое представление доски - на которой отображаются карты которыми игроки ходят. 
+ *
+ ************************************/
 
 class MTG_BoardView : public QWidget, public MTG_Observer
 {
