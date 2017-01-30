@@ -5,6 +5,8 @@
 #include <QList>
 #include "mtg_engine.hpp"
 
+using namespace Engine;
+
 /*************************************
  *
  * Графическое представление набора карт 

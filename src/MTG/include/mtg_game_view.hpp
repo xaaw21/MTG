@@ -7,6 +7,8 @@
 #include "ui_game_view.h"
 #include "mtg_engine.hpp"
 
+using namespace Engine;
+
 class SplashView;
 
 /*************************************

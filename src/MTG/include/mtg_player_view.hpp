@@ -5,6 +5,8 @@
 #include "ui_player_view.h"
 #include "mtg_engine.hpp"
 
+using namespace Engine;
+
 /*************************************
  *
  * Графическое представление панели игрока(состояние и набор карт)

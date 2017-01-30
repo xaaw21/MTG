@@ -4,6 +4,8 @@
 #include <thread>
 #include <chrono>
 
+using namespace Engine;
+
 std::string PhaseToString(Phase_t aPhase) {
 	switch (aPhase)
 	{

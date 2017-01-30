@@ -3,22 +3,27 @@
 
 #include "mtg_player.hpp"
 
-/*************************************
- *
- * Реализация Игрока - Робота с примитивной логикой игры
- *
- ************************************/
-
-class MTG_ENGINE_EXPORT MTG_Robot : public MTG_Player
+namespace Engine
 {
-public:
-	MTG_Robot();
-	~MTG_Robot();
 
-protected:
-	bool invocation();
-	bool attack();				    
-	bool protection(const MTG_CardSet &aAttackCards);
-};
+	/*************************************
+	 *
+	 * Реализация Игрока - Робота с примитивной логикой игры
+	 *
+	 ************************************/
+
+	class MTG_ENGINE_EXPORT MTG_Robot : public MTG_Player
+	{
+	public:
+		MTG_Robot();
+		~MTG_Robot();
+
+	protected:
+		bool invocation();
+		bool attack();
+		bool protection(const MTG_CardSet &aAttackCards);
+	};
+
+};//namespace Engine
 
 #endif //MTG_ROBOT_HPP

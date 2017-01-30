@@ -4,9 +4,11 @@
 #include "ui_board_view.h"
 #include "mtg_engine.hpp"
 
+using namespace Engine;
+
 /*************************************
  *
- * Графическое представление доски - на которой отображаются карты которыми игроки ходят. 
+ * Графическое представление доски - на которой отображаются карты которыми игроки ходят.
  *
  ************************************/
 
@@ -27,7 +29,8 @@ private:
 
 private:
 	Ui::BoardView ui;
-	std::pair<MTG_Player*,MTG_Player*> mPlayers;
+	std::pair<MTG_Player*, MTG_Player*> mPlayers;
 };
+
 
 #endif //MTG_BOARD_VIEW_HPP
