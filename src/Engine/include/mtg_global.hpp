@@ -25,4 +25,7 @@
 	#define MTG_ENGINE_EXPORT MTG_DECL_IMPORT
 #endif
 
+
+#define UNUSED(x) (void)x;
+
 #endif //MTG_GLOBAL_HPP
