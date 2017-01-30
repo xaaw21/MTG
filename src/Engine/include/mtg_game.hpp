@@ -57,6 +57,10 @@ protected:
 
 private:
 	bool play(MTG_Player *aPlayer,const MTG_CardSet &aCards); //игрок играет
+	void nextStart();
+	void nextInvocation();
+	void nextAttack();
+	void nextFinish();
 
 private:
 	State_t mState;

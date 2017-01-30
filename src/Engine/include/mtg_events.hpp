@@ -30,7 +30,7 @@ public:
 	virtual ~MTG_Event();
 
 	Type type() const;
-	const MTG_Game *game() const;
+	const MTG_Game* game() const;
 
 protected:
 	MTG_Event(Type aType);

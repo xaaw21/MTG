@@ -18,7 +18,7 @@ MTG_Event::Type MTG_Event::type() const {
 	return mType;
 }
 
-const MTG_Game *MTG_Event::game() const {
+const MTG_Game* MTG_Event::game() const {
 	return mGame;
 }
 

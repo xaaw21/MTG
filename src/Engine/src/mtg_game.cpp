@@ -35,7 +35,6 @@ Phase_t MTG_Game::phase() const {
 }
 
 bool MTG_Game::setPlayers(MTG_Player *aFirstPlayer, MTG_Player *aSecondPlayer) {
-	//if (mState != E_StopState) return false;
 	if (!aFirstPlayer || !aSecondPlayer || aFirstPlayer == aSecondPlayer) return false;
 	
 	clear();
@@ -124,149 +123,217 @@ Phase_t MTG_Game::next() {
 
 	mPhase = NextPhase(mPhase);
 
+	switch (mPhase)
+	{
+	case E_StartPhase: {
+		nextStart();
+		break;
+	}
+	case E_InvocationPhase: {
+		nextInvocation();
+		break;
+	}
+	case E_AttackPhase: {
+		nextAttack();
+		break;
+	}
+	case E_FinishPhase: {
+		nextFinish();
+		break;
+	}
+	default: return E_NonePhase;
+	}
+
+	return mPhase;
+}
+
+void MTG_Game::nextStart() {
+	std::function<MTG_CardSet(MTG_Player*, int)> open_cards = [this](MTG_Player *aPlayer, int aCount) -> MTG_CardSet {
+		MTG_CardSet cards = aPlayer->mDeck.cards(aCount);
+		aPlayer->mCards.insert(aPlayer->mCards.end(), cards.begin(), cards.end());
+		return cards;
+	};
+
+	std::function<void(MTG_Player*)> init_palyer = [this](MTG_Player *aPlayer) -> void {
+		//Существа в "Атаке" и "Призывается" переходят в боеготовность , а так же восстанавливаем здоровье всех существ
+		for (auto it = aPlayer->mCards.begin(), end = aPlayer->mCards.end(); it != end; it++) {
+			if (it->State == MTG_Card::E_AttackState || it->State == MTG_Card::E_InvocationState) 
+				it->State = MTG_Card::E_ProtectionState;
+			it->Health = it->protection();
+		}
+
+		//Даем маны
+		aPlayer->mMana = mRound;
+		aPlayer->mState = MTG_Player::E_NoneState;
+	};
+
 	MTG_Player *attack_player = player(E_AttackRole);
 	MTG_Player *protected_player = player(E_ProtectionRole);
 	MTG_CardMap cards_map;
 
-	switch (mPhase)
-	{
-	case E_StartPhase: {
+	//Инициализация фазы начала боя
+	uint8_t open_attack = 1, open_protection = 1;
+	//Переходим на следующий раунд
+	mRound++;
 
-		std::function<MTG_CardSet(MTG_Player*,int)> open_cards = [this](MTG_Player *aPlayer,int aCount) -> MTG_CardSet {
-			MTG_CardSet cards = aPlayer->mDeck.cards(aCount);
-			aPlayer->mCards.insert(aPlayer->mCards.end(),cards.begin(), cards.end());
-			return cards;
-		};
+	//Если это самый первый раунд, то выбираем атакующего игрока
+	if (1 == mRound) {
+		std::srand((int)this);
+		attack_player = (std::rand() % 2) ? mPlayers.first : mPlayers.second;
+		open_attack = 3;
+		open_protection = 4;
+	}
+	//Иначе атакующее право переходит другому игроку
+	else attack_player = playerNext(player(E_AttackRole));
 
-		std::function<void(MTG_Player*)> init_palyer = [this](MTG_Player *aPlayer) -> void {
-			//Существа в "Атаке" и "Призывается" переходят в боеготовность , а так же восстанавливаем здоровье всех существ
-			for (auto it = aPlayer->mCards.begin(), end = aPlayer->mCards.end(); it != end; it++) {
-				if(it->State == MTG_Card::E_AttackState || it->State == MTG_Card::E_InvocationState) it->State = MTG_Card::E_ProtectionState;
-				it->Health = it->protection();
-			}
+	//Определяем защитника
+	protected_player = playerNext(attack_player);
 
-			//Даем маны
-			aPlayer->mMana = mRound;
-			aPlayer->mState = MTG_Player::E_NoneState;
-		};
+	//Инициализируем игроков	
+	attack_player->mRole = E_AttackRole;
+	protected_player->mRole = E_ProtectionRole;
+	init_palyer(attack_player);
+	init_palyer(protected_player);
 
-		//Инициализация фазы начала боя
-		uint8_t open_attack = 1, open_protection = 1;
-		//Переходим на следующий раунд
-		mRound++;
 
-		//Если это самый первый раунд, то выбираем атакующего игрока
-		if (1 == mRound) {
-			std::srand((int)this);
-			attack_player = (std::rand() % 2) ? mPlayers.first : mPlayers.second;
-			open_attack = 3;
-			open_protection = 4;
+	cards_map[attack_player] = open_cards(attack_player, open_attack);
+	cards_map[protected_player] = open_cards(protected_player, open_protection);
+
+	MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound, cards_map);
+	phase_event->mGame = this;
+	this->event(phase_event);
+}
+
+void MTG_Game::nextInvocation() {
+	player(E_AttackRole)->mState = MTG_Player::E_PlayState;
+	player(E_ProtectionRole)->mState = MTG_Player::E_PlayState;
+
+	MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound);
+	phase_event->mGame = this;
+	this->event(phase_event);
+}
+
+void MTG_Game::nextAttack() {
+	player(E_AttackRole)->mState = MTG_Player::E_PlayState;
+	player(E_ProtectionRole)->mState = MTG_Player::E_NoneState;
+
+	MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound);
+	phase_event->mGame = this;
+	this->event(phase_event);
+}
+
+void MTG_Game::nextFinish() {
+	MTG_Player *attack_player = player(E_AttackRole);
+	MTG_Player *protected_player = player(E_ProtectionRole);
+	MTG_CardMap cards_map;
+
+	attack_player->mState = MTG_Player::E_NoneState;
+	protected_player->mState = MTG_Player::E_NoneState;
+
+	MTG_CardSet attack_cards = attack_player->mCards.cards(MTG_Card::E_AttackState);
+	MTG_CardSet protection_cards = protected_player->mCards.cards(MTG_Card::E_AttackState);
+
+	for (auto it_attack = attack_cards.begin(), end_attack = attack_cards.end(), it_protected = protection_cards.begin(), end_protected = protection_cards.end(); it_attack != end_attack; it_attack++) {
+		if (it_protected != end_protected) {
+			it_protected->Health -= it_attack->attack();
+			it_attack->Health -= it_protected->attack();
+			if (it_protected->Health <= 0) it_protected->State = MTG_Card::E_DeadState;
+			if (it_attack->Health <= 0) it_attack->State = MTG_Card::E_DeadState;
+			it_protected++;
 		}
-		//Иначе атакующее право переходит другому игроку
-		else attack_player = playerNext(player(E_AttackRole));
+		else protected_player->mHealth -= it_attack->attack();
+	};
 
-		//Определяем защитника
-		protected_player = playerNext(attack_player);
+	static std::function<void(MTG_Player*, const MTG_CardSet&)> cards_merge = [this](MTG_Player *aPlayer, const MTG_CardSet &aCardsMerge) -> void {
+		for (auto it_merge = aCardsMerge.begin(), end_merge = aCardsMerge.end(); it_merge != end_merge; it_merge++) {
+			for (auto it_cards = aPlayer->mCards.begin(), end_cards = aPlayer->mCards.end(); it_cards != end_cards; it_cards++) {
+				if (it_merge->ID == it_cards->ID) {
 
-		//Инициализируем игроков	
-		attack_player->mRole = E_AttackRole;
-		protected_player->mRole = E_ProtectionRole;	
-		init_palyer(attack_player);
-		init_palyer(protected_player);
-		
+					it_cards->Health = it_merge->Health;
+					it_cards->State = it_merge->State;
 
-		cards_map[attack_player] = open_cards(attack_player, open_attack);
-		cards_map[protected_player] = open_cards(protected_player, open_protection);
-
-		break;
-	}
-	case E_InvocationPhase: {
-		attack_player->mState = MTG_Player::E_PlayState;
-		protected_player->mState = MTG_Player::E_PlayState;
-		break;
-	}
-	case E_AttackPhase: {
-		attack_player->mState = MTG_Player::E_PlayState;
-		protected_player->mState = MTG_Player::E_NoneState;
-		break;
-	}
-	case E_FinishPhase: {
-		attack_player->mState = MTG_Player::E_NoneState;
-		protected_player->mState = MTG_Player::E_NoneState;
-
-		MTG_CardSet attack_cards = attack_player->mCards.cards(MTG_Card::E_AttackState);
-		MTG_CardSet protection_cards = protected_player->mCards.cards(MTG_Card::E_AttackState);
-
-		for (auto it_attack = attack_cards.begin(), end_attack = attack_cards.end() , it_protected = protection_cards.begin(), end_protected = protection_cards.end(); it_attack != end_attack; it_attack++) {
-			if (it_protected != end_protected) {			
-				it_protected->Health -= it_attack->attack();
-				it_attack->Health -= it_protected->attack();
-				if (it_protected->Health <= 0) it_protected->State = MTG_Card::E_DeadState;
-				if (it_attack->Health <= 0) it_attack->State = MTG_Card::E_DeadState;
-				it_protected++;
-			}
-			else protected_player->mHealth -= it_attack->attack();	
-		};
-
-		static std::function<void(MTG_Player*,const MTG_CardSet&)> cards_merge = [this](MTG_Player *aPlayer,const MTG_CardSet &aCardsMerge) -> void {
-			for (auto it_merge = aCardsMerge.begin(), end_merge = aCardsMerge.end(); it_merge != end_merge; it_merge++) {
-				for (auto it_cards = aPlayer->mCards.begin(), end_cards = aPlayer->mCards.end(); it_cards != end_cards; it_cards++) {
-					if (it_merge->ID == it_cards->ID) {
-
-						it_cards->Health = it_merge->Health;
-						it_cards->State = it_merge->State;
-
-						break;
-					}
+					break;
 				}
 			}
-		};
-
-		cards_merge(attack_player, attack_cards);
-		cards_merge(protected_player, protection_cards);
-
-		//attack_player->mCards.merge(attack_cards,merge);
-		//protected_player->mCards.merge(protection_cards, merge);
-
-		cards_map[attack_player] = attack_cards;
-		cards_map[protected_player] = protection_cards;
-
-		MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound, cards_map);
-		phase_event->mGame = this;
-		this->event(phase_event);
-
-		if (protected_player->mHealth <= 0) {
-			MTG_WinEvent *win_event = new MTG_WinEvent(attack_player);
-			win_event->mGame = this;
-			this->event(win_event);
-			stop();
 		}
+	};
 
-		return mPhase;
-	}
-	default: return E_NonePhase;
-	}
+	cards_merge(attack_player, attack_cards.cards(MTG_Card::E_AttackState));
+	cards_merge(protected_player, protection_cards.cards(MTG_Card::E_AttackState));
+
+	cards_map[attack_player] = attack_cards;
+	cards_map[protected_player] = protection_cards;
 
 	MTG_PhaseEvent *phase_event = new MTG_PhaseEvent(mPhase, mRound, cards_map);
 	phase_event->mGame = this;
 	this->event(phase_event);
 
-	return mPhase;
+	//если защитник умер - победил атакующий
+	if (protected_player->mHealth <= 0) {
+		MTG_WinEvent *win_event = new MTG_WinEvent(attack_player);
+		win_event->mGame = this;
+		this->event(win_event);
+		stop();
+	}
+
+	//если у одного из игроков закончились карты - ничья
+	if (
+		(protected_player->mCards.size() <= 0 && protected_player->mDeck.size() <= 0) ||
+		(attack_player->mCards.size() <= 0 && attack_player->mDeck.size() <= 0)
+		)
+	{
+		MTG_WinEvent *win_event = new MTG_WinEvent(0);
+		win_event->mGame = this;
+		this->event(win_event);
+		stop();
+	}
+
 }
+
 
 bool MTG_Game::play(MTG_Player *aPlayer, const MTG_CardSet &aCards) {
 	if (aPlayer->mState != MTG_Player::E_PlayState) return false;
 	aPlayer->mState = MTG_Player::E_PlayedState;
 
-	if (aPlayer->mRole == ::E_AttackRole) {
+	//проверяем на присутствие карт у игрока которыми он походил
+	//если карта присутствует изменяем её состояние	- иначе отбрасываем её
+	MTG_CardSet play_cards;
+	for (auto it = aCards.begin(), end = aCards.end(); it != end; ++it) {
 		switch (mPhase)
 		{
-		case E_AttackPhase: {
-			this->playerNext(aPlayer)->mState = MTG_Player::E_PlayState;
+		case E_InvocationPhase: {
+			if (it->cost() > aPlayer->mMana) continue;
+			for (auto it_cards = aPlayer->mCards.begin(), end_cards = aPlayer->mCards.end(); it_cards != end_cards; it_cards++) {
+				if (it_cards->ID == it->ID) {
+					if (it_cards->State == MTG_Card::E_OpenState) {
+						aPlayer->mMana -= it_cards->cost();
+						it_cards->State = MTG_Card::E_InvocationState;
+						play_cards.push_back(*it_cards);
+					}
+				}
+			}
+
 			break;
 		}
-		default: break;
+		case E_AttackPhase: {
+			for (auto it_cards = aPlayer->mCards.begin(), end_cards = aPlayer->mCards.end(); it_cards != end_cards; it_cards++) {
+				if (it_cards->ID == it->ID) {
+					if (it_cards->State == MTG_Card::E_ProtectionState) {
+						it_cards->State = MTG_Card::E_AttackState;
+						play_cards.push_back(*it_cards);
+					}
+					break;
+				}
+			}
+
+			break;
 		}
+		default: return false;
+		}
+	}
+
+	if (aPlayer->mRole == ::E_AttackRole && mPhase == E_AttackPhase) {
+		this->playerNext(aPlayer)->mState = MTG_Player::E_PlayState;
 	}
 
 	MTG_PlayerEvent *player_event = new MTG_PlayerEvent(mPhase, aPlayer, aCards);

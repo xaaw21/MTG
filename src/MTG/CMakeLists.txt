@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+cmake_policy(SET CMP0020 NEW) # enable PROJECT_VERSION
+
 set(MTG_GAME_NAME MTG_Game)
 
 set(CMAKE_AUTOMOC ON)

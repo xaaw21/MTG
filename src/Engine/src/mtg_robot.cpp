@@ -31,7 +31,7 @@ bool MTG_Robot::invocation() {
 bool MTG_Robot::attack() {
 	MTG_CardSet cards = this->cards(MTG_Card::E_ProtectionState);
 	MTG_CardSet attack_cards;
-	for (auto it = cards.begin(), end = cards.end(); it != end; ++it) {;
+	for (auto it = cards.begin(), end = cards.end(); it != end; ++it) {
 		if(it->attack() > it->protection()) attack_cards.push_back(*it);
 	}
 

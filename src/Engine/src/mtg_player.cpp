@@ -20,7 +20,7 @@ MTG_Player::~MTG_Player() {
 
 }
 
-const MTG_Game *MTG_Player::game() const {
+const MTG_Game* MTG_Player::game() const {
 	return mGame;
 }
 
@@ -60,49 +60,9 @@ std::string MTG_Player::name() const {
 	return mName;
 }
 
-#include <iostream>
-
 bool MTG_Player::play(const MTG_CardSet &aCards) {
 	if (!mGame) return false;
-	if (mState != E_PlayState) return false;
-
-	MTG_CardSet play_cards;
-	Phase_t phase = mGame->phase();
-	for (auto it = aCards.begin(), end = aCards.end(); it != end; ++it) {		
-		switch (phase)
-		{
-		case E_InvocationPhase: {
-			if (it->cost() > mMana) continue;
-			for (auto it_cards = mCards.begin(), end_cards = mCards.end(); it_cards != end_cards; it_cards++) {
-				if (it_cards->ID == it->ID){
-					if (it_cards->State == MTG_Card::E_OpenState) {
-						mMana -= it_cards->cost();
-						it_cards->State = MTG_Card::E_InvocationState;
-						play_cards.push_back(*it_cards);
-					}
-				}
-			}
-
-			break;
-		}
-		case E_AttackPhase: {
-			for (auto it_cards = mCards.begin(), end_cards = mCards.end(); it_cards != end_cards; it_cards++) {
-				if (it_cards->ID == it->ID) {
-					if (it_cards->State == MTG_Card::E_ProtectionState) {
-						it_cards->State = MTG_Card::E_AttackState;
-						play_cards.push_back(*it_cards);
-					}
-					break;
-				}
-			}
-
-			break;
-		}
-		default: return false;
-		}
-	}
-
-	return mGame->play(this, play_cards);
+	return mGame->play(this, aCards);
 }
 
 void MTG_Player::event(const MTG_Event *aEvent) {

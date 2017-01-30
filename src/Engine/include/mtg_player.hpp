@@ -28,7 +28,7 @@ public:
 		E_PlayedState
 	};
 
-	const MTG_Game *game() const;
+	const MTG_Game* game() const;
 	State_t state() const;
 	Role_t role() const;
 	Mana_t mana() const;

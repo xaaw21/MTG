@@ -5,6 +5,12 @@
 #include "ui_log_view.h"
 #include "mtg_engine.hpp"
 
+/*************************************
+ *
+ * Графическое представление, регистрирующее события игры и отображающее их в виде лога
+ *
+ ************************************/
+
 class MTG_LogView : public QWidget, public MTG_Observer
 {
 public:
