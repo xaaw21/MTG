@@ -8,10 +8,12 @@ static IDObserver_t GLOBAL_ID_OBSERVER(1);
 
 MTG_Game::MTG_Game()
 	:mState(E_StopState),
-	mPlayers(0,0),
-	mPhase(E_NonePhase),
 	mRound(0),
-	mLoopEvents(false)
+	mPhase(E_NonePhase),
+	mLoopEvents(false),
+	mEvents(),
+	mPlayers(0,0),
+	mObservers()	
 {
 	  
 }
@@ -109,10 +111,6 @@ bool MTG_Game::stop() {
 	std::for_each(mEvents.begin(), mEvents.end(), [](const MTG_Event* aEvent) { delete aEvent;});
 	mEvents.clear();
 	if (mState != E_StopState) {
-
-		//mPlayers.first->reset(this);
-		//mPlayers.second->reset(this);
-
 		mState = E_StopState;
 		MTG_GameEvent *game_event = new MTG_GameEvent(mState);
 		game_event->mGame = this;
@@ -199,8 +197,6 @@ Phase_t MTG_Game::next() {
 		MTG_CardSet attack_cards = attack_player->mCards.cards(MTG_Card::E_AttackState);
 		MTG_CardSet protection_cards = protected_player->mCards.cards(MTG_Card::E_AttackState);
 
-		auto it_protected = protection_cards.begin(), end_protected = protection_cards.end();
-		int g = 0;
 		for (auto it_attack = attack_cards.begin(), end_attack = attack_cards.end() , it_protected = protection_cards.begin(), end_protected = protection_cards.end(); it_attack != end_attack; it_attack++) {
 			if (it_protected != end_protected) {			
 				it_protected->Health -= it_attack->attack();
@@ -269,6 +265,7 @@ bool MTG_Game::play(MTG_Player *aPlayer, const MTG_CardSet &aCards) {
 			this->playerNext(aPlayer)->mState = MTG_Player::E_PlayState;
 			break;
 		}
+		default: break;
 		}
 	}
 

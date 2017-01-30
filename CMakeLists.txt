@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 2.8)
 
 cmake_policy(SET CMP0048 NEW) # enable PROJECT_VERSION
 
@@ -7,6 +7,7 @@ include(CMakePackageConfigHelpers)
 #options
 option(BUILD_STATIC_ENGINE "Set to OFF|ON (default is ON) to control build Engine as STATIC library" ON)
 option(BUILD_TESTS "Set to OFF|ON (default is OFF) to build tests" OFF)
+option(BUILD_GAME_ROBOTS "Set to OFF|ON (default is OFF) to game robots" OFF)
 
 PROJECT(MTG VERSION 1.0.0)
 
@@ -32,15 +33,15 @@ if("${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}" STREQUAL "")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
 endif ()
 
-if(BUILD_STATIC)
+if(BUILD_STATIC_ENGINE)
     set(LIB_MODE STATIC)
     add_definitions(-DMTG_STATIC)
     message(STATUS "Building static libraries")
-else(BUILD_STATIC)
+else(BUILD_STATIC_ENGINE)
     set(LIB_MODE SHARED)
     add_definitions(-DMTG_SHARED)
     message(STATUS "Building dynamic libraries")
-endif(BUILD_STATIC)
+endif(BUILD_STATIC_ENGINE)
 
 set(CMAKE_DEBUG_POSTFIX "_d")
 set(CMAKE_RELWITHDEBINFO_POSTFIX "_rd")
@@ -57,6 +58,7 @@ if(DEFINED MSVC)
 set(CMAKE_CXX_FLAGS "/EHsc")
 else()
 set(CMAKE_CXX_FLAGS "-std=c++11 -U__STRICT_ANSI__")
+#set(CMAKE_CXX_FLAGS "-std=c++11 -U__STRICT_ANSI__ -Wall -Wextra -Werror")
 endif(DEFINED MSVC)
 
 set(PROJECT_TARGETS "${PROJECT_NAME}Targets")

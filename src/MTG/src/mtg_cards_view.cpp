@@ -109,6 +109,7 @@ void MTG_CardsView::refresh() {
 #define CHECK_CARD_SHIFT 10
 
 void MTG_CardsView::paintEvent(QPaintEvent *aEvent) {
+	UNUSED(aEvent);
 
 	static std::function<void(QPainter*, const Item&)> paintItem = [](QPainter *aPainter, const Item &aItem) -> void {
 		QRectF rect = aItem.Rect;
@@ -190,6 +191,7 @@ void MTG_CardsView::mouseMoveEvent(QMouseEvent *aEvent) {
 }
 
 void MTG_CardsView::leaveEvent(QEvent *aEvent) {
+	UNUSED(aEvent);
 	if (IS_VALID_ID_CARD(mIDEnter)) {
 		mIDEnter = INVALID_ID_CARD;
 		repaint();
@@ -199,6 +201,7 @@ void MTG_CardsView::leaveEvent(QEvent *aEvent) {
 }
 
 void MTG_CardsView::resizeEvent(QResizeEvent *aEvent) {
+	UNUSED(aEvent);
 	relocate();
 }
 

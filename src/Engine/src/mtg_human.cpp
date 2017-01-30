@@ -20,5 +20,6 @@ bool MTG_Human::attack() {
 }
 
 bool MTG_Human::protection(const MTG_CardSet &aAttackCards) {
+	UNUSED(aAttackCards)
 	return false;
 }

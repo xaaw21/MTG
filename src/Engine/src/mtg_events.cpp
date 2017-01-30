@@ -71,8 +71,8 @@ MTG_CardMap MTG_PhaseEvent::cards() const {
 
 MTG_PlayerEvent::MTG_PlayerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards)
 	:MTG_Event(E_PlayerEvent),
-	mPhase(aPhase),
 	mPlayer(aPlayer),
+	mPhase(aPhase),
 	mCards(aCards)
 {
 

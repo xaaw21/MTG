@@ -45,14 +45,19 @@ MTG_Player *MTG_PlayerView::player() const {
 }	
 
 void MTG_PlayerView::changeGame(MTG_Game *aGame) {
+	UNUSED(aGame);
 	update();
 }
 
 void MTG_PlayerView::gameEvent(MTG_Game::State_t aState) {
+	UNUSED(aState);
 	update();
 }
 
 void MTG_PlayerView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
+	UNUSED(aRound);
+	UNUSED(aCards);
+
 	switch (aPhase)
 	{
 	case E_StartPhase: {
@@ -65,21 +70,25 @@ void MTG_PlayerView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMa
 		break;
 	}
 	case E_FinishPhase: update(); break;
+	default: break;
 	}
 }
 
 void MTG_PlayerView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
-	if (aPlayer = mPlayer) update();
+	UNUSED(aCards);
+
+	if (aPlayer == mPlayer) update();
 	else {
 		switch (aPhase)
 		{
 		case E_AttackPhase: if (mPlayer->state() == MTG_Player::E_PlayState) open(MTG_Card::E_ProtectionState); break;
+		default: break;
 		}
 	}
 }
 
 void MTG_PlayerView::winEvent(MTG_Player *aPlayerWin) {
-
+	UNUSED(aPlayerWin);
 }
 
 void MTG_PlayerView::play() {
@@ -135,6 +144,7 @@ void MTG_PlayerView::update()
 		{
 		case MTG_Card::E_OpenState: is_play = (phase == ::E_InvocationPhase); break;
 		case MTG_Card::E_ProtectionState: is_play = (phase == E_AttackPhase); break;
+		default: break;
 		}
 
 		is_play = (mPlayer->state() == MTG_Player::E_PlayState && is_play);
@@ -157,6 +167,7 @@ void MTG_PlayerView::update()
 		{
 			case ::E_AttackRole: role = "Нападающий"; break;
 			case ::E_ProtectionRole: role = "Защитник"; break;
+			default: break;
 		}
 	}
 

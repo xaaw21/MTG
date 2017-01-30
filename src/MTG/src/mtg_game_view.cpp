@@ -109,6 +109,7 @@ void MTG_GameView::changeGame(MTG_Game *aGame) {
 void MTG_GameView::gameEvent(MTG_Game::State_t aState) {
 	switch (aState)
 	{
+	case MTG_Game::E_StopState: break;
 	case MTG_Game::E_StartState: {
 		ui.gv_lbl_status->setText("Запуск игры");
 		break;
@@ -117,6 +118,8 @@ void MTG_GameView::gameEvent(MTG_Game::State_t aState) {
 }
 
 void MTG_GameView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
+	UNUSED(aCards);
+
 	update(aPhase);
 
 	switch (aPhase)
@@ -134,10 +137,14 @@ void MTG_GameView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap 
 		mTimer.start(TIMEOUT_NEXT_PHASE_FINISH);
 		break;
 	}
+	default: break;
 	}
 }
 
 void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
+	UNUSED(aPlayer);
+	UNUSED(aCards);
+
 	switch (aPhase)
 	{
 	case E_InvocationPhase:
@@ -149,6 +156,7 @@ void MTG_GameView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_Ca
 		}
 		break;
 	}
+	default: break;
 	}
 }
 
@@ -160,6 +168,7 @@ void MTG_GameView::winEvent(MTG_Player *aPlayerWin) {
 }
 
 void MTG_GameView::resizeEvent(QResizeEvent *aEvent) {
+	UNUSED(aEvent);
 	mSplash->resize(this->size());
 }
 

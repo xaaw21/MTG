@@ -1,1 +1,54 @@
-Long Live CXTagObject!!!
+
+
+		ver 1.0.0
+		/*******************************   Описание    *******************************/
+
+		Проект состоит из следующих модулей:
+
+			- MTG_Engine - Движок игры.Здесь расположена логика игры и данные, а также набор абстракции.
+			- MTG_Game - Сама игра. Здесь расположен функционал по отображению. Зависит от MTG_Engine.
+			- MTG_TestGame - Тест для отладки и проверки работоспособности игрового движка.Два робота играют между собой - операции выводятся в консоль.Зависит от MTG_Engine.
+
+
+		/*******************************   Системные требования    *******************************/
+
+		- Windows(>= XP)
+		- Разрешение экрана(>= 1680 x 1050)
+
+		/*******************************   Зависимости сборки   *******************************/
+
+		- >= C++11(>= gcc: 4.9 or >= msvc 10)
+		- >= Qt 5.x.x
+		- >= cmake 2.8
+
+		/*******************************      Разработка       *******************************/
+
+		Разработка велась на Windows 10, с использованием gcc(mingw_64: 5.3.0),qt(5.7.0),cmake(3.6.0).
+		Работоспособность и сборку на других платформах с другими версиями компонент - не проверял. 
+		Поэтому не ручаюсь за адекватную работу с другими средами и компонентами.
+
+		/*******************************      Сборка       *******************************/
+
+		Build System: cmake;
+
+		Доступные опции(необязательные):
+		BUILD_TESTS(default: OFF) - соберет тест движка игры(играют два робота друг против друга - консольное приложение).
+		BUILD_STATIC_ENGINE(default: ON) - соберет движок(MTG_Engine) в статическом виде.
+		BUILD_GAME_ROBOTS(default: OFF) - соберет версию игры, где играю два робота друг против друга, иначе робот - человек. 
+		CMAKE_INSTALL_PREFIX - путь для установки игры из Makefile
+		CMAKE_PREFIX_PATH - путь до сторонних библиотек
+
+		Windows(Examples):
+			msvc: cmake -G "Nmake Makefiles" -DBUILD_TESTS=ON -DCMAKE_PREFIX_PATH=<qt_path> -DCMAKE_INSTALL_PREFIX=<path> <path_cmake_lists>
+				  nmake
+				  namke install
+
+		Windows(Examples):
+			gcc: cmake -G "MinGW Makefiles" -DBUILD_TESTS=ON -DCMAKE_PREFIX_PATH=<qt_path> -DCMAKE_INSTALL_PREFIX=<path> <path_cmake_lists>
+				  mingw32-make
+				  mingw32-make install
+
+		Linux(Examples):
+			gcc: cmake -G "Unix Makefiles" -DBUILD_TESTS=ON -DCMAKE_INSTALL_PREFIX=<path> <path_cmake_lists>
+				  make
+				  make install		  

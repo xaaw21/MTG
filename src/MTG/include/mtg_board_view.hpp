@@ -16,7 +16,6 @@ protected:
 	void gameEvent(MTG_Game::State_t aState);
 	void phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards);
 	void playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards);
-	void winEvent(MTG_Player *aPlayerWin);
 
 private:
 	void cleanup();

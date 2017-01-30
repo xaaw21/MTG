@@ -41,6 +41,8 @@ bool MTG_Robot::attack() {
 }
 
 bool MTG_Robot::protection(const MTG_CardSet &aAttackCards) {
+	UNUSED(aAttackCards);
+	
 	MTG_CardSet cards = this->cards(MTG_Card::E_ProtectionState);
 	MTG_CardSet protection_cards;
 	for (auto it = cards.begin(), end = cards.end(); it != end; ++it) {

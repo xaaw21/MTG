@@ -60,6 +60,7 @@ MTG_LogView::~MTG_LogView()
 }
 
 void MTG_LogView::changeGame(MTG_Game *aGame) {
+	UNUSED(aGame);
 	refresh();
 }
 
@@ -85,10 +86,13 @@ void MTG_LogView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &
 	case E_InvocationPhase:	print("Фаза: Призыв"); break;
 	case E_AttackPhase: print("Фаза: Атака"); break;
 	case E_FinishPhase:	print("Фаза: Завершение"); break;
+	default: break;
 	}
 }
 
 void MTG_LogView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
+	UNUSED(aPhase);
+
 	print(QString("%1 походил:\n %2").arg(QString::fromStdString(aPlayer->name())).arg(CardsToString(aCards)));
 }
 

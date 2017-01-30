@@ -58,11 +58,30 @@ void MTG_Observer::event(const MTG_Event *aEvent) {
 		this->winEvent(win_event->playerWin());
 		break;
 	}
+	default: break;
 	}
 }
 
-void MTG_Observer::changeGame(MTG_Game *aGame) {}
-void MTG_Observer::gameEvent(MTG_Game::State_t aState) {}
-void MTG_Observer::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {}
-void MTG_Observer::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {}
-void MTG_Observer::winEvent(MTG_Player *aPlayerWin) {}
+void MTG_Observer::changeGame(MTG_Game *aGame) {
+	UNUSED(aGame);
+}
+
+void MTG_Observer::gameEvent(MTG_Game::State_t aState) {
+	UNUSED(aState);
+}
+
+void MTG_Observer::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
+	UNUSED(aPhase);
+	UNUSED(aRound);
+	UNUSED(aCards);
+}
+
+void MTG_Observer::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) {
+	UNUSED(aPhase);
+	UNUSED(aPlayer);
+	UNUSED(aCards);
+}
+
+void MTG_Observer::winEvent(MTG_Player *aPlayerWin) {
+	UNUSED(aPlayerWin);
+}

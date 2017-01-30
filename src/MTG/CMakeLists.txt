@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 2.8)
 
 set(MTG_GAME_NAME MTG_Game)
 
@@ -33,9 +33,14 @@ else()
   endif()
 endif(DEFINED MSVC)
 
+if(BUILD_GAME_ROBOTS)
+	set(GAME_ROBOTS "GAME_ROBOTS")
+endif(BUILD_GAME_ROBOTS)
+
 target_compile_definitions(${MTG_GAME_NAME} 
 	PRIVATE
 		${Qt5Widgets_DEFINITIONS}
+		${GAME_ROBOTS}
 )
 target_link_libraries(${MTG_GAME_NAME} ${Qt5Widgets_LIBRARIES} ${MTG_ENGINE_LIBRARIES})
 target_include_directories( "${MTG_GAME_NAME}"
@@ -44,6 +49,13 @@ target_include_directories( "${MTG_GAME_NAME}"
       # $<BUILD_INTERFACE:${Qt5Widgets_INCLUDES}>
        $<BUILD_INTERFACE:${MTG_ENGINE_INCLUDES}> 
 )
+
+install(TARGETS ${MTG_GAME_NAME}
+  EXPORT ${PROJECT_TARGETS}
+  RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
+  LIBRARY DESTINATION "${INSTALL_LIB_DIR}"
+  ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
+ )
 
 set_target_properties(${MTG_GAME_NAME} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 set_target_properties(${MTG_GAME_NAME} PROPERTIES RELWITHDEBINFO_POSTFIX ${CMAKE_RELWITHDEBINFO_POSTFIX})

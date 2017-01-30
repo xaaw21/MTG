@@ -5,10 +5,13 @@
 
 MTG_Player::MTG_Player()
 	:mGame(0),
+	mName(),
 	mMana(0),
 	mHealth(0),
-	mRole(E_NoneRole),
-    mState(E_NoneState)
+	mDeck(),
+    mState(E_NoneState),
+    mRole(E_NoneRole),
+    mCards()
 {
 
 }
@@ -107,7 +110,6 @@ void MTG_Player::event(const MTG_Event *aEvent) {
 
 	switch (aEvent->type())
 	{
-	case MTG_Event::E_GameEvent:  break;
 	case MTG_Event::E_PhaseEvent: {
 		if (mState == E_PlayState) {
 			const MTG_PhaseEvent *phase_event = (const MTG_PhaseEvent*)aEvent;
@@ -115,6 +117,7 @@ void MTG_Player::event(const MTG_Event *aEvent) {
 			{
 			case E_InvocationPhase: invocation(); break;
 			case E_AttackPhase: if(mRole == ::E_AttackRole) attack(); break;
+			default: break;
 			}
 		}
 		break;
@@ -126,9 +129,11 @@ void MTG_Player::event(const MTG_Event *aEvent) {
 			switch (player_event->phase())
 			{
 			case E_AttackPhase: if(mRole == ::E_ProtectionRole) protection(player_event->cards()); break;
+			default: break;
 			}
 		}
 		break;
 	}
+	default: break;
 	}
 }

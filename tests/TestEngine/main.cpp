@@ -2,6 +2,7 @@
 #include "mtg_engine.hpp"
 #include <iostream>
 #include <thread>
+#include <chrono>
 
 std::string PhaseToString(Phase_t aPhase) {
 	switch (aPhase)
@@ -10,6 +11,7 @@ std::string PhaseToString(Phase_t aPhase) {
 	case E_InvocationPhase:	return "Invocation";
 	case E_AttackPhase:	return "Attack";
 	case E_FinishPhase:	return "Finish";
+	default: break;
 	}
 
 	return std::string();
@@ -20,6 +22,7 @@ std::string RoleToString(Role_t aRole) {
 	{
 	case E_AttackRole: return "Attack";
 	case E_ProtectionRole: return "Protected";
+	default: break;
 	}
 
 	return std::string();
@@ -66,7 +69,7 @@ MTG_ConsoleView::~MTG_ConsoleView()
 }
 
 void MTG_ConsoleView::changeGame(MTG_Game *aGame) {
-
+	UNUSED(aGame);
 }
 
 void MTG_ConsoleView::gameEvent(MTG_Game::State_t aState) {
@@ -83,6 +86,7 @@ void MTG_ConsoleView::gameEvent(MTG_Game::State_t aState) {
 }
 
 void MTG_ConsoleView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardMap &aCards) {
+
 	switch(aPhase)
 	{
 	case E_StartPhase: {
@@ -111,10 +115,13 @@ void MTG_ConsoleView::phaseEvent(Phase_t aPhase, Round_t aRound, const MTG_CardM
 		std::cout << std::endl;
 		break;
 	}
+	default: break;
 	}
 }
 
 void MTG_ConsoleView::playerEvent(Phase_t aPhase, MTG_Player *aPlayer, const MTG_CardSet &aCards) { 
+	UNUSED(aPhase);
+
 	std::cout << "Play("<< aPlayer ->name() << "): " << RoleToString(aPlayer->role()) << " - " << SetToString(aCards) << std::endl << std::endl;
 }
 
@@ -127,10 +134,13 @@ void MTG_ConsoleView::winEvent(MTG_Player *aPlayerWin) {
 
 /*******************   main   *********************************/
 
-using namespace std::chrono_literals;
+
 
 int main(int argv,char **argc)
 {
+	UNUSED(argv);
+	UNUSED(argc);
+
 	MTG_Robot robot1, robot2;
 	robot1.setName("Robot 1");
 	robot2.setName("Robot 2");
@@ -141,8 +151,10 @@ int main(int argv,char **argc)
 	MTG_ConsoleView view;
 	view.setGame(&game);
 
+	std::chrono::milliseconds msec(500);
+
 	if (game.start()) {
-		while (::E_NonePhase != game.next()) { std::this_thread::sleep_for(500ms); }
+		while (::E_NonePhase != game.next()) { std::this_thread::sleep_for(msec); }
 	}
 	else {
 		std::cout << "Game not started" << std::endl;
