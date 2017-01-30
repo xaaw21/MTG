@@ -141,36 +141,36 @@ Phase_t MTG_Game::next() {
 		};
 
 		std::function<void(MTG_Player*)> init_palyer = [this](MTG_Player *aPlayer) -> void {
-			//Ñóùåñòâà â "Àòàêå" è "Ïðèçûâàåòñÿ" ïåðåõîäÿò â áîåãîòîâíîñòü , à òàê æå âîññòàíàâëèâàåì çäîðîâüå âñåõ ñóùåñòâ
+			//Ð¡ÑƒÑ‰ÐµÑÑ‚Ð²Ð° Ð² "ÐÑ‚Ð°ÐºÐµ" Ð¸ "ÐŸÑ€Ð¸Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ" Ð¿ÐµÑ€ÐµÑ…Ð¾Ð´ÑÑ‚ Ð² Ð±Ð¾ÐµÐ³Ð¾Ñ‚Ð¾Ð²Ð½Ð¾ÑÑ‚ÑŒ , Ð° Ñ‚Ð°Ðº Ð¶Ðµ Ð²Ð¾ÑÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼ Ð·Ð´Ð¾Ñ€Ð¾Ð²ÑŒÐµ Ð²ÑÐµÑ… ÑÑƒÑ‰ÐµÑÑ‚Ð²
 			for (auto it = aPlayer->mCards.begin(), end = aPlayer->mCards.end(); it != end; it++) {
 				if(it->State == MTG_Card::E_AttackState || it->State == MTG_Card::E_InvocationState) it->State = MTG_Card::E_ProtectionState;
 				it->Health = it->protection();
 			}
 
-			//Äàåì ìàíû
+			//Ð”Ð°ÐµÐ¼ Ð¼Ð°Ð½Ñ‹
 			aPlayer->mMana = mRound;
 			aPlayer->mState = MTG_Player::E_NoneState;
 		};
 
-		//Èíèöèàëèçàöèÿ ôàçû íà÷àëà áîÿ
+		//Ð˜Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ Ñ„Ð°Ð·Ñ‹ Ð½Ð°Ñ‡Ð°Ð»Ð° Ð±Ð¾Ñ
 		uint8_t open_attack = 1, open_protection = 1;
-		//Ïåðåõîäèì íà ñëåäóþùèé ðàóíä
+		//ÐŸÐµÑ€ÐµÑ…Ð¾Ð´Ð¸Ð¼ Ð½Ð° ÑÐ»ÐµÐ´ÑƒÑŽÑ‰Ð¸Ð¹ Ñ€Ð°ÑƒÐ½Ð´
 		mRound++;
 
-		//Åñëè ýòî ñàìûé ïåðâûé ðàóíä, òî âûáèðàåì àòàêóþùåãî èãðîêà
+		//Ð•ÑÐ»Ð¸ ÑÑ‚Ð¾ ÑÐ°Ð¼Ñ‹Ð¹ Ð¿ÐµÑ€Ð²Ñ‹Ð¹ Ñ€Ð°ÑƒÐ½Ð´, Ñ‚Ð¾ Ð²Ñ‹Ð±Ð¸Ñ€Ð°ÐµÐ¼ Ð°Ñ‚Ð°ÐºÑƒÑŽÑ‰ÐµÐ³Ð¾ Ð¸Ð³Ñ€Ð¾ÐºÐ°
 		if (1 == mRound) {
 			std::srand((int)this);
 			attack_player = (std::rand() % 2) ? mPlayers.first : mPlayers.second;
 			open_attack = 3;
 			open_protection = 4;
 		}
-		//Èíà÷å àòàêóþùåå ïðàâî ïåðåõîäèò äðóãîìó èãðîêó
+		//Ð˜Ð½Ð°Ñ‡Ðµ Ð°Ñ‚Ð°ÐºÑƒÑŽÑ‰ÐµÐµ Ð¿Ñ€Ð°Ð²Ð¾ Ð¿ÐµÑ€ÐµÑ…Ð¾Ð´Ð¸Ñ‚ Ð´Ñ€ÑƒÐ³Ð¾Ð¼Ñƒ Ð¸Ð³Ñ€Ð¾ÐºÑƒ
 		else attack_player = playerNext(player(E_AttackRole));
 
-		//Îïðåäåëÿåì çàùèòíèêà
+		//ÐžÐ¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÐ¼ Ð·Ð°Ñ‰Ð¸Ñ‚Ð½Ð¸ÐºÐ°
 		protected_player = playerNext(attack_player);
 
-		//Èíèöèàëèçèðóåì èãðîêîâ	
+		//Ð˜Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð¸Ñ€ÑƒÐµÐ¼ Ð¸Ð³Ñ€Ð¾ÐºÐ¾Ð²	
 		attack_player->mRole = E_AttackRole;
 		protected_player->mRole = E_ProtectionRole;	
 		init_palyer(attack_player);

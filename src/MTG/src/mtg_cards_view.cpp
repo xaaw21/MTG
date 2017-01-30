@@ -244,7 +244,7 @@ void MTG_CardsView::relocate() {
 
 void BoardView::update(const MTG_CardSet &aCards) {
 MTG_CardSet cards_update = aCards;
-//Проходим по имеющимся картам и проверяем на их актуальность - лишние удаляем
+//РџСЂРѕС…РѕРґРёРј РїРѕ РёРјРµСЋС‰РёРјСЃСЏ РєР°СЂС‚Р°Рј Рё РїСЂРѕРІРµСЂСЏРµРј РЅР° РёС… Р°РєС‚СѓР°Р»СЊРЅРѕСЃС‚СЊ - Р»РёС€РЅРёРµ СѓРґР°Р»СЏРµРј
 for (auto it_cards = mCards.begin(), end_cards = mCards.end(); it_cards != end_cards; it_cards++) {
 bool find = false;
 for (auto it_update = cards_update.begin(), end_update = cards_update.end(); it_update != end_update; it_update++) {
@@ -261,7 +261,7 @@ if (it_cards == end_cards) break;
 }
 }
 
-//Добавляем новые карты
+//Р”РѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Рµ РєР°СЂС‚С‹
 for (auto it_update = cards_update.begin(), end_update = cards_update.end(); it_update != end_update; it_update++) {
 Item item;
 item.Card = *it_update;

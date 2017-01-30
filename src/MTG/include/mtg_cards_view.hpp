@@ -19,7 +19,7 @@ public:
 	void setCheckable(bool aCheckable);
 	bool isCheckable() const;
 
-	//TODO: поддерживаются только HCenter и HLeft
+	//TODO: РїРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ С‚РѕР»СЊРєРѕ HCenter Рё HLeft
 	void setAlignment(Qt::Alignment aAlignment);
 	Qt::Alignment alignment() const;
 
